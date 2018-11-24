@@ -1,3 +1,4 @@
+=======
 stx-mirror
 =========
 
@@ -13,19 +14,16 @@ Container using Unified Dockerfile
 
 .. code-block:: bash
 
-    cd ..
+    pushd ..
     make
-    docker run --name stx-mirror-container -itd -v $(pwd):/localdisk -v /sys/fs/cgroup:/sys/fs/cgroup:ro local/builder-stx-builder:7.4
-    docker exec -it stx-mirror-container bash
-
+    popd
 
 Running the Mirror Download tool
 ---------------------
 
 .. code-block:: bash
-
-    cd /localdisk/stx-mirror
-    python MirrorDownloader.py
+   
+   docker run -it -v $(pwd):/localdisk --rm <your_docker_image_name>:<your_image_version> python /localdisk/MirrorDownloader.py
 
 Running Custom Hooks
 ---------------------
@@ -46,5 +44,3 @@ Disclaimer
 ---------------------
 - Manifest could not be up to date
 - This is not a complete implementation for stx-mirror tool
-- This guide usage of Unified Dockerfile may not be using best practices
-
