@@ -7,7 +7,6 @@ This is the Mirror Downloader proposal proof of concept.
 
 Specfile: https://review.openstack.org/#/c/619631/
 
-
 Container using Unified Dockerfile
 ---------------------
 
@@ -16,16 +15,13 @@ Container using Unified Dockerfile
     pushd ..
     make
     popd
-    docker run -it -v $(pwd):/localdisk <your_docker_image_name>:<your_image_version> bash
-
 
 Running the Mirror Download tool
 ---------------------
 
 .. code-block:: bash
 
-    cd /localdisk
-    python MirrorDownloader.py
+   docker run -it -v $(pwd):/localdisk --rm local/builder-stx-builder:7.4 python /localdisk/MirrorDownloader.py
 
 Running Custom Hooks
 ---------------------
@@ -46,4 +42,3 @@ Disclaimer
 ---------------------
 - Manifest could not be up to date
 - This is not a complete implementation for stx-mirror tool
-
