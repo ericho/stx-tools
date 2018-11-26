@@ -8,7 +8,6 @@ This is the Mirror Downloader proposal proof of concept.
 
 Specfile: https://review.openstack.org/#/c/619631/
 
-
 Container using Unified Dockerfile
 ---------------------
 
