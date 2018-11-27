@@ -13,16 +13,16 @@ from Queue import Queue
 import yaml
 from rpmUtils.miscutils import splitFilename
 
-INPUT = "/localdisk/manifest.yaml"
+BASEDIR = "/localdisk"
 
-CONFIG = {"base": "/localdisk/output",
+CONFIG = {"base": os.path.join(BASEDIR, "output"),
           "stxrel": "stx-r1",
           "distro": "CentOS",
           "osrel": "pike",
           "otherurl": "http://vault.centos.org/7.4.1708/os/x86_64/",
           "maxthreads": 4,
-          "logFilename": "/localdisk/LogMirrorDownloader.log",
-          "input": INPUT}
+          "logFilename": os.path.join(BASEDIR, "LogMirrorDownloader.log"),
+          "input": os.path.join(BASEDIR, "manifest.yaml")}
 
 logging.basicConfig(filename=CONFIG["logFilename"],
                     level=logging.DEBUG,
