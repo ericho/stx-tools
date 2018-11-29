@@ -9,11 +9,23 @@ import logging
 import os
 import threading
 import subprocess
+import argparse
 from Queue import Queue
 import yaml
 from rpmUtils.miscutils import splitFilename
 
-LOCALDISKDIR = "/localdisk"
+parser = argparse.ArgumentParser(
+    description='A tool to download the StarlingX mirror')
+
+def create_cmd_arguments():
+    parser.add_argument('--output', type=str,
+                        help='The output directory')
+    parser.add_argument('--upstream', action='store_true',
+                        help='Try first download items from upstream repositories')
+    parser.add_argument('--prune', action='store_true',
+                        help='Remove unused files.')
+
+LOCALDISKDIR = os.getcwd()
 
 CONFIG = {"base": os.path.join(LOCALDISKDIR, "output"),
           "stxrel": "stx-r1",
@@ -22,7 +34,7 @@ CONFIG = {"base": os.path.join(LOCALDISKDIR, "output"),
           "otherurl": "http://vault.centos.org/7.4.1708/os/x86_64/",
           "maxthreads": 4,
           "logFilename": os.path.join(LOCALDISKDIR, "LogMirrorDownloader.log"),
-          "input": os.path.join(LOCALDISKDIR, "manifest.yaml")}
+          "input": os.path.join(LOCALDISKDIR, "manifests/manifest.yaml")}
 
 logging.basicConfig(filename=CONFIG["logFilename"],
                     level=logging.DEBUG,
@@ -386,7 +398,9 @@ class MirrorDownloader:
         return results
 
 
-if __name__ == "__main__":
+def main():
+    create_cmd_arguments()
+    args = parser.parse_args()
     logging.info("Starting program")
     MANIFEST = Manifest(CONFIG)
     MANIFEST.create_manifest()
