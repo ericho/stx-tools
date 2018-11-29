@@ -1,0 +1,6 @@
+#!/usr/bin/python
+
+import stx_mirror.mirror_downloader
+
+if __name__ == '__main__':
+   stx_mirror.mirror_downloader.main()
