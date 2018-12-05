@@ -10,3 +10,9 @@ class MissingPackageListType(StxException):
 
 class UnsupportedPackageListType(StxException):
     pass
+
+class MissingPackageType(StxException):
+    pass
+
+class UnsupportedPackageType(StxException):
+    pass
