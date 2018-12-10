@@ -6,7 +6,7 @@ import unittest
 from yaml_parser import YamlParser
 from yaml_parser import CentOSPackageList
 from yaml_parser import CentOSPackage
-from exceptions import *
+from stx_exceptions import *
 import yaml
 import tempfile
 import os
