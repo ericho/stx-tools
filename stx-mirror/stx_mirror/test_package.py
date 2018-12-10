@@ -4,7 +4,7 @@
 
 import unittest
 from package import CentOSPackage
-from exceptions import *
+from stx_exceptions import *
 
 class TestCentOSPackage(unittest.TestCase):
 

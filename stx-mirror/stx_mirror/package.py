@@ -3,7 +3,7 @@
 #
 
 from collections import MutableMapping
-from exceptions import *
+from stx_exceptions import *
 from rpmUtils.miscutils import splitFilename
 
 try:
