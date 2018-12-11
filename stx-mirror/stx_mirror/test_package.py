@@ -22,7 +22,7 @@ class TestCentOSPackage(unittest.TestCase):
         self.assertEquals(url, pkg.url)
         self.assertEquals(None, pkg.script)
 
-    def test_new_package_with_dict(self):
+    def test_new_package_with_dict_full(self):
         d = {
             'name': 'drbd-8.4.3.tar.gz',
             'url': 'http://www.linbit.com/downloads/drbd/8.4/archive/drbd-8.4.3.tar.gz',
@@ -32,6 +32,23 @@ class TestCentOSPackage(unittest.TestCase):
         self.assertEquals(d['name'], pkg.name)
         self.assertEquals(d['url'], pkg.url)
         self.assertEquals(d['script'], pkg.script)
+
+    def test_new_package_with_dict_no_script(self):
+        d = {
+            'name': 'drbd-8.4.3.tar.gz',
+            'url': 'http://www.linbit.com/downloads/drbd/8.4/archive/drbd-8.4.3.tar.gz',
+        }
+        pkg = CentOSPackage(d)
+        self.assertEquals(d['name'], pkg.name)
+        self.assertEquals(d['url'], pkg.url)
+        self.assertEquals(None, pkg.script)
+
+    def test_new_package_with_unsupported_data(self):
+        d = 123124
+        try:
+            pkg = CentOSPackage(d)
+        except UnsupportedPackageType as e:
+            self.assertTrue(True, "Exception received: {}".format(e))
 
     def test_new_package_with_large_url(self):
         url = 'http://cbs.centos.org/kojifiles/packages/go-srpm-macros/2/3.el7/noarch/go-srpm-macros-2-3.el7.noarch.rpm'
@@ -89,3 +106,5 @@ class TestCentOSPackage(unittest.TestCase):
         self.assertEquals(d['name'], pkg.name)
         self.assertEquals(d['url'], pkg.url)
         self.assertEquals(d['script'], pkg.script)
+
+
