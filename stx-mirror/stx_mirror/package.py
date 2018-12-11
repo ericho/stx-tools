@@ -47,7 +47,6 @@ class CentOSPackageList(PackageList):
 
 class CentOSPackage:
     """ """
-    # TODO: Implement all this..
     def __init__(self, info):
         self.name = None
         self.url = None
@@ -55,12 +54,13 @@ class CentOSPackage:
         self._basedir='output/stx-r1/CentOS/pike'
         if isinstance(info, dict):
             if 'name' not in info and 'url' not in info:
-               raise UnsupportedPackageType
+               raise UnsupportedPackageType('Package is missing name and url')
             if 'url' not in info:
-               raise UnsupportedPackageType
+               raise UnsupportedPackageType('Package is missing url')
             self.name = info['name']
             self.url = info['url']
-            self.script = info['script']
+            if 'script' in info:
+                self.script = info['script']
         elif isinstance(info, str):
             url = urlparse(info)
             if url.scheme != '' and url.netloc != '':
@@ -74,7 +74,8 @@ class CentOSPackage:
             else:
                raise UnsupportedPackageType
         else:
-           raise UnsupportedPackageType
+           raise UnsupportedPackageType('Package format error {}'.format(
+                                         info))
 
     def _get_arch(self, pkg):
         (_n, _v, _r, _e, _a) = splitFilename(pkg)
