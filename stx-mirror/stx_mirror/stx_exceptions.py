@@ -16,3 +16,12 @@ class MissingPackageType(StxException):
 
 class UnsupportedPackageType(StxException):
     pass
+
+class UnsupportedConfigurationType(StxException):
+    pass
+
+class UnsupportedConfigurationValue(StxException):
+    pass
+
+class MissingConfigurationValue(StxException):
+    pass
