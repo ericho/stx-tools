@@ -5,7 +5,7 @@
 import yaml
 from package import CentOSPackageList
 from package import CentOSPackage
-from exceptions import *
+from stx_exceptions import *
 
 SUPPORTED_TYPES = {
     'centos': CentOSPackageList,
