@@ -48,6 +48,24 @@ class TestYamlParser(unittest.TestCase):
             var = YamlParser()
             _ = yp.load(var)
 
+    def test_load_incomplete_config_file(self):
+        test_cfg = """[DownloadSettings]
+base: ./output
+release: stx-r1
+booturl: http://vault.centos.org/7.4.1708/os/x86_64/
+maxthreads: 4
+log: ./LogMirrorDownloader.log
+input: ../manifests/manifest.yaml"""
+        tmp_test_file = TempFiles(test_cfg)
+        config = Configuration()
+        # forgot the load so config is incomplete...
+        yp = YamlParser()
+        try:
+            _ = yp.load(config)
+        except UnsupportedConfigurationType as e:
+            self.assertTrue(True, "Exception received: {}".format(e))
+        tmp_test_file.close()
+
     def test_load_missing_yaml_file(self):
         config = create_configuration_for_testing_yaml('doesntexist.yaml')
         yp = YamlParser()
