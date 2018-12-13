@@ -11,6 +11,22 @@ import yaml
 import tempfile
 from configuration import Configuration
 
+def create_configuration_for_testing_yaml(file_name):
+        test_cfg = """[DownloadSettings]
+base: ./output
+release: stx-r1
+distro: CentOS
+openstack: pike
+booturl: http://vault.centos.org/7.4.1708/os/x86_64/
+maxthreads: 4
+log: ./LogMirrorDownloader.log
+input: {}""".format(file_name)
+        tmp_test_file = TempFiles(test_cfg)
+        config = Configuration()
+        config.load(tmp_test_file.name)
+        tmp_test_file.close()
+        return config
+
 class TempFiles:
     def __init__(self, content):
         self.tmp_file = tempfile.NamedTemporaryFile()
@@ -33,50 +49,20 @@ class TestYamlParser(unittest.TestCase):
             _ = yp.load(var)
 
     def test_load_missing_yaml_file(self):
-        test_cfg = """[DownloadSettings]
-base: ./output
-release: stx-r1
-distro: CentOS
-openstack: pike
-booturl: http://vault.centos.org/7.4.1708/os/x86_64/
-maxthreads: 4
-log: ./LogMirrorDownloader.log
-input: ../manifests/{}""".format('something.yaml')
-        tmp_test_file = TempFiles(test_cfg)
-        config = Configuration()
-        try:
-            config.load(tmp_test_file.name)
-        except UnsupportedConfigurationType as e:
-            self.assertTrue(False, "Exception received: {}".format(e))
+        config = create_configuration_for_testing_yaml('doesntexist.yaml')
         yp = YamlParser()
         with self.assertRaises(IOError):
             _ = yp.load(config)
-        tmp_test_file.close()
 
     def test_load_invalid_yaml_file(self):
         tmp_input_file = TempFiles("Testing\n\n--:::")
-        test_cfg = """[DownloadSettings]
-base: ./output
-release: stx-r1
-distro: CentOS
-openstack: pike
-booturl: http://vault.centos.org/7.4.1708/os/x86_64/
-maxthreads: 4
-log: ./LogMirrorDownloader.log
-input: {}""".format(tmp_input_file.name)
-        tmp_test_file = TempFiles(test_cfg)
-        config = Configuration()
-        try:
-            config.load(tmp_test_file.name)
-        except UnsupportedConfigurationType as e:
-            self.assertTrue(False, "Exception received: {}".format(e))
+        config = create_configuration_for_testing_yaml(tmp_input_file.name)
 
         yp = YamlParser()
 
         with self.assertRaises(yaml.YAMLError):
             _ = yp.load(config)
 
-        tmp_test_file.close()
         tmp_input_file.close()
 
     def test_load_basic_valid_yaml(self):
@@ -87,19 +73,7 @@ rpms:
   - acpica-tools-20160527-1.el7.x86_64.rpm
         """
         tmp_input_file = TempFiles(test_yaml)
-        test_cfg = """[DownloadSettings]
-base: ./output
-release: stx-r1
-distro: CentOS
-openstack: pike
-booturl: http://vault.centos.org/7.4.1708/os/x86_64/
-maxthreads: 4
-log: ./LogMirrorDownloader.log
-input: {}""".format(tmp_input_file.name)
-        tmp_test_file = TempFiles(test_cfg)
-
-        config = Configuration()
-        config.load(tmp_test_file.name)
+        config = create_configuration_for_testing_yaml(tmp_input_file.name)
 
         yp = YamlParser()
         try:
@@ -107,7 +81,6 @@ input: {}""".format(tmp_input_file.name)
         except Exception as e:
             self.assertTrue(False, "Exception received: {}".format(e))
 
-        tmp_test_file.close()
         tmp_input_file.close()
 
 
@@ -119,19 +92,7 @@ rpms:
   - acpica-tools-20160527-1.el7.x86_64.rpm
         """
         tmp_input_file = TempFiles(test_yaml)
-        test_cfg = """[DownloadSettings]
-base: ./output
-release: stx-r1
-distro: CentOS
-openstack: pike
-booturl: http://vault.centos.org/7.4.1708/os/x86_64/
-maxthreads: 4
-log: ./LogMirrorDownloader.log
-input: {}""".format(tmp_input_file.name)
-        tmp_test_file = TempFiles(test_cfg)
-
-        config = Configuration()
-        config.load(tmp_test_file.name)
+        config = create_configuration_for_testing_yaml(tmp_input_file.name)
 
         yp = YamlParser()
         pkgs = yp.load(config)
@@ -140,7 +101,6 @@ input: {}""".format(tmp_input_file.name)
         self.assertEquals(3, len(pkgs['rpms']))
         self.assertIsInstance(pkgs['rpms'][0], CentOSPackage)
 
-        tmp_test_file.close()
         tmp_input_file.close()
 
     def test_load_with_invalid_type(self):
@@ -151,25 +111,12 @@ rpms:
   - acpica-tools-20160527-1.el7.x86_64.rpm
         """
         tmp_input_file = TempFiles(test_yaml)
-        test_cfg = """[DownloadSettings]
-base: ./output
-release: stx-r1
-distro: CentOS
-openstack: pike
-booturl: http://vault.centos.org/7.4.1708/os/x86_64/
-maxthreads: 4
-log: ./LogMirrorDownloader.log
-input: {}""".format(tmp_input_file.name)
-        tmp_test_file = TempFiles(test_cfg)
-
-        config = Configuration()
-        config.load(tmp_test_file.name)
+        config = create_configuration_for_testing_yaml(tmp_input_file.name)
 
         yp = YamlParser()
         with self.assertRaises(UnsupportedPackageListType):
             _ = yp.load(config)
 
-        tmp_test_file.close()
         tmp_input_file.close()
 
     def test_load_without_type(self):
@@ -179,25 +126,12 @@ input: {}""".format(tmp_input_file.name)
   - acpica-tools-20160527-1.el7.x86_64.rpm
         """
         tmp_input_file = TempFiles(test_yaml)
-        test_cfg = """[DownloadSettings]
-base: ./output
-release: stx-r1
-distro: CentOS
-openstack: pike
-booturl: http://vault.centos.org/7.4.1708/os/x86_64/
-maxthreads: 4
-log: ./LogMirrorDownloader.log
-input: {}""".format(tmp_input_file.name)
-        tmp_test_file = TempFiles(test_cfg)
-
-        config = Configuration()
-        config.load(tmp_test_file.name)
+        config = create_configuration_for_testing_yaml(tmp_input_file.name)
 
         yp = YamlParser()
         with self.assertRaises(MissingPackageListType):
             _ = yp.load(config)
 
-        tmp_test_file.close()
         tmp_input_file.close()
 
     def test_load_with_sections(self):
@@ -227,19 +161,7 @@ bootfiles:
   - http://someurl.org/golang-bin-1.10.2-1.el7.x86_64.rpm
 """
         tmp_input_file = TempFiles(test_yaml)
-        test_cfg = """[DownloadSettings]
-base: ./output
-release: stx-r1
-distro: CentOS
-openstack: pike
-booturl: http://vault.centos.org/7.4.1708/os/x86_64/
-maxthreads: 4
-log: ./LogMirrorDownloader.log
-input: {}""".format(tmp_input_file.name)
-        tmp_test_file = TempFiles(test_cfg)
-
-        config = Configuration()
-        config.load(tmp_test_file.name)
+        config = create_configuration_for_testing_yaml(tmp_input_file.name)
 
         yp = YamlParser()
         pkgs = yp.load(config)
@@ -251,7 +173,6 @@ input: {}""".format(tmp_input_file.name)
             self.assertTrue(section in pkgs)
             self.assertEquals(3, len(pkgs[section]))
 
-        tmp_test_file.close()
         tmp_input_file.close()
 
     def test_load_invalid_type(self):
@@ -261,23 +182,10 @@ input: {}""".format(tmp_input_file.name)
   - acpica-tools-20160527-1.el7.x86_64.rpm
 """
         tmp_input_file = TempFiles(test_yaml)
-        test_cfg = """[DownloadSettings]
-base: ./output
-release: stx-r1
-distro: CentOS
-openstack: pike
-booturl: http://vault.centos.org/7.4.1708/os/x86_64/
-maxthreads: 4
-log: ./LogMirrorDownloader.log
-input: {}""".format(tmp_input_file.name)
-        tmp_test_file = TempFiles(test_cfg)
-
-        config = Configuration()
-        config.load(tmp_test_file.name)
+        config = create_configuration_for_testing_yaml(tmp_input_file.name)
 
         yp = YamlParser()
         with self.assertRaises(UnsupportedPackageListType):
             _ = yp.load(config)
 
-        tmp_test_file.close()
         tmp_input_file.close()
