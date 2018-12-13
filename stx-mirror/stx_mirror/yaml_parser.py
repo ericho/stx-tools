@@ -20,6 +20,8 @@ class YamlParser:
     def load(self, config):
         if not isinstance(config, Configuration):
             raise UnsupportedConfigurationType('YamlParser did not receive a valid Configuration')
+        if not config.is_complete():
+            raise UnsupportedConfigurationType('YamlParser receive an incomplete Configuration')
         with open(config.input, 'r') as f:
             lines = f.read()
         try:
@@ -41,5 +43,4 @@ class YamlParser:
             raise UnsupportedPackageListType(e)
 
         return l
-
 
