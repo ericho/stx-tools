@@ -6,6 +6,7 @@ import yaml
 from package import CentOSPackageList
 from package import CentOSPackage
 from stx_exceptions import *
+from configuration import Configuration
 
 SUPPORTED_TYPES = {
     'centos': CentOSPackageList,
@@ -16,10 +17,11 @@ class YamlParser:
     def __init__(self):
         pass
 
-    def load(self, yaml_file):
-        with open(yaml_file, 'r') as f:
+    def load(self, config):
+        if not isinstance(config, Configuration):
+            raise UnsupportedConfigurationType('YamlParser did not receive a valid Configuration')
+        with open(config.input, 'r') as f:
             lines = f.read()
-
         try:
             data = yaml.load(lines)
         except yaml.YAMLError as e:
