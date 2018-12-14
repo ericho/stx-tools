@@ -29,16 +29,16 @@ class YamlParser:
         except yaml.YAMLError as e:
             raise
 
-        return self._to_supported_object(data)
+        return self._to_supported_object(data, config)
 
-    def _to_supported_object(self, data):
+    def _to_supported_object(self, data, config):
         try:
             list_type = data['type']
         except KeyError as e:
             raise MissingPackageListType(e)
 
         try:
-            l = SUPPORTED_TYPES[list_type](data)
+            l = SUPPORTED_TYPES[list_type](data, config)
         except KeyError as e:
             raise UnsupportedPackageListType(e)
 

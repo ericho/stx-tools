@@ -5,6 +5,7 @@
 from collections import MutableMapping
 from stx_exceptions import *
 from rpmUtils.miscutils import splitFilename
+import os
 
 try:
     from urllib.parse import urlparse
@@ -34,24 +35,26 @@ class PackageList(MutableMapping):
 
 class CentOSPackageList(PackageList):
     """ """
-    def __init__(self, data):
+    def __init__(self, data, config):
         self.data = data
+        self.config = config
         for key in self.data:
             if key != 'type':
                 self.__setitem__(key,
-                                 self._to_centos_pkgs(self.data[key]))
+                                 self._to_centos_pkgs(self.data[key], config))
 
-    def _to_centos_pkgs(self, list_packages):
-        return [CentOSPackage(i) for i in list_packages]
+    def _to_centos_pkgs(self, list_packages, config):
+        return [CentOSPackage(i, config) for i in list_packages]
 
 
 class CentOSPackage:
     """ """
-    def __init__(self, info):
+    def __init__(self, info, config):
         self.name = None
         self.url = None
         self.script = None
-        self._basedir='output/stx-r1/CentOS/pike'
+        self._basedir = os.path.join(config.base, config.release,
+                                     config.distro, config.openstack)
         if isinstance(info, dict):
             if 'name' not in info and 'url' not in info:
                raise UnsupportedPackageType('Package is missing name and url')
@@ -72,7 +75,8 @@ class CentOSPackage:
                 self.url = None
                 self.script = None
             else:
-               raise UnsupportedPackageType
+               raise UnsupportedPackageType('Package format error {}'.format(
+                                             info))
         else:
            raise UnsupportedPackageType('Package format error {}'.format(
                                          info))
