@@ -4,7 +4,6 @@
 
 from collections import MutableMapping
 from stx_exceptions import *
-from rpmUtils.miscutils import splitFilename
 import os
 
 try:
@@ -81,20 +80,17 @@ class CentOSPackage:
            raise UnsupportedPackageType('Package format error {}'.format(
                                          info))
 
-    def _get_arch(self, pkg):
-        (_n, _v, _r, _e, _a) = splitFilename(pkg)
-        return _a
-
-    def _convert_package(self, pkg):
-        (_n, _v, _r, _e, _a) = splitFilename(pkg)
-        return '{}-{}-{}'.format(_n, _v, _r)
+    def _get_package_and_arch(self):
+        base, ext = os.path.splitext(self.name)
+        _package, _arch = os.path.splitext(base)
+        _arch = _arch.replace('.','')
+        return _package, _arch
 
     def download(self):
        cmd = ''
        if self.name is not None and self.url is None and self.script is None:
             downloader = 'sudo -E yumdownloader -q -C --releasever=7'
-            arch = self._get_arch(self.name)
-            pkg = self._convert_package(self.name)
+            pkg, arch = self._get_package_and_arch()
             if arch == 'src':
                 package_dir = '--destdir {}/Source'.format(self._basedir)
                 arch = '--source'
@@ -103,16 +99,21 @@ class CentOSPackage:
                 arch = '-x \*i686 --archlist=noarch,x86_64'
             cmd = '{} {} {} {}'.format(downloader, arch, pkg, package_dir)
        elif self.name is not None and self.url is not None and self.script is None:
+            import urllib2
+            #proxy = urllib2.ProxyHandler({'http': 'http://proxy-chain.intel.com:911'})
+            #opener = urllib2.build_opener(proxy)
+            #urllib2.install_opener(opener)
+            filedata = urllib2.urlopen(self.url)
+            datatowrite = filedata.read()
+            with open(self.name, 'wb') as f:
+                f.write(datatowrite)
+       elif self.name is not None and self.url is not None and self.script is not None:
             #import urllib2
             #response = urllib2.urlopen(self.url)
             #html = response.read()
-            pass
-       elif self.name is not None and self.url is not None and self.script is not None:
+            #self._postprocessing()
             pass
        return cmd
 
-
-    def _get_download_cmd():
+    def _postprocessing(self):
         pass
-
-

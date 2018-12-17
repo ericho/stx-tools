@@ -146,4 +146,8 @@ class TestCentOSPackage(unittest.TestCase):
         self.assertEquals(d['url'], pkg.url)
         self.assertEquals(d['script'], pkg.script)
 
-
+    def test_download_url_2(self):
+        conf = create_configuration_for_testing_centos_package()
+        url = 'http://cbs.centos.org/kojifiles/packages/go-srpm-macros/2/3.el7/noarch/go-srpm-macros-2-3.el7.noarch.rpm'
+        pkg = CentOSPackage(url, conf)
+        pkg.download()
