@@ -4,7 +4,8 @@
 
 from collections import MutableMapping
 from stx_exceptions import *
-from rpmUtils.miscutils import splitFilename
+import os
+import urllib2
 
 try:
     from urllib.parse import urlparse
@@ -34,24 +35,26 @@ class PackageList(MutableMapping):
 
 class CentOSPackageList(PackageList):
     """ """
-    def __init__(self, data):
+    def __init__(self, data, config):
         self.data = data
+        self.config = config
         for key in self.data:
             if key != 'type':
                 self.__setitem__(key,
-                                 self._to_centos_pkgs(self.data[key]))
+                                 self._to_centos_pkgs(self.data[key], config))
 
-    def _to_centos_pkgs(self, list_packages):
-        return [CentOSPackage(i) for i in list_packages]
+    def _to_centos_pkgs(self, list_packages, config):
+        return [CentOSPackage(i, config) for i in list_packages]
 
 
 class CentOSPackage:
     """ """
-    def __init__(self, info):
+    def __init__(self, info, config):
         self.name = None
         self.url = None
         self.script = None
-        self._basedir='output/stx-r1/CentOS/pike'
+        self._basedir = os.path.join(config.base, config.release,
+                                     config.distro, config.openstack)
         if isinstance(info, dict):
             if 'name' not in info and 'url' not in info:
                raise UnsupportedPackageType('Package is missing name and url')
@@ -72,43 +75,46 @@ class CentOSPackage:
                 self.url = None
                 self.script = None
             else:
-               raise UnsupportedPackageType
+               raise UnsupportedPackageType('Package format error {}'.format(
+                                             info))
         else:
            raise UnsupportedPackageType('Package format error {}'.format(
                                          info))
 
-    def _get_arch(self, pkg):
-        (_n, _v, _r, _e, _a) = splitFilename(pkg)
-        return _a
-
-    def _convert_package(self, pkg):
-        (_n, _v, _r, _e, _a) = splitFilename(pkg)
-        return '{}-{}-{}'.format(_n, _v, _r)
-
     def download(self):
-       cmd = ''
        if self.name is not None and self.url is None and self.script is None:
-            downloader = 'sudo -E yumdownloader -q -C --releasever=7'
-            arch = self._get_arch(self.name)
-            pkg = self._convert_package(self.name)
-            if arch == 'src':
-                package_dir = '--destdir {}/Source'.format(self._basedir)
-                arch = '--source'
-            else:
-                package_dir = '--destdir {}/Binary/{}'.format(self._basedir, arch)
-                arch = '-x \*i686 --archlist=noarch,x86_64'
-            cmd = '{} {} {} {}'.format(downloader, arch, pkg, package_dir)
+            cmd = self._get_yumdownloader_command()
+            return cmd
+            # Execute cmd
        elif self.name is not None and self.url is not None and self.script is None:
-            #import urllib2
-            #response = urllib2.urlopen(self.url)
-            #html = response.read()
-            pass
+            self._download_url()
        elif self.name is not None and self.url is not None and self.script is not None:
-            pass
-       return cmd
+            self._download_url()
+            self._postprocessing()
 
+    def _get_yumdownloader_command(self):
+        downloader = 'sudo -E yumdownloader -q -C --releasever=7'
+        pkg, arch = self._get_package_and_arch()
+        if arch == 'src':
+            package_dir = '--destdir {}/Source'.format(self._basedir)
+            arch = '--source'
+        else:
+            package_dir = '--destdir {}/Binary/{}'.format(self._basedir, arch)
+            arch = '-x \*i686 --archlist=noarch,x86_64'
+        cmd = '{} {} {} {}'.format(downloader, arch, pkg, package_dir)
+        return cmd
 
-    def _get_download_cmd():
+    def _download_url(self):
+        filedata = urllib2.urlopen(self.url)
+        datatowrite = filedata.read()
+        with open(self.name, 'wb') as f:
+            f.write(datatowrite)
+
+    def _get_package_and_arch(self):
+        base, ext = os.path.splitext(self.name)
+        _package, _arch = os.path.splitext(base)
+        _arch = _arch.replace('.','')
+        return _package, _arch
+
+    def _postprocessing(self):
         pass
-
-

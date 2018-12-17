@@ -12,8 +12,8 @@ class Configuration:
         self.booturl = "http://vault.centos.org/7.4.1708/os/x86_64/"
         self.maxthreads = 4
         self.log = "./LogMirrorDownloader.log"
-        self.input = "./manifest/manifest.yaml" 
-    
+        self.input = "./manifests/manifest.yaml"
+
     def load(self, conf):
         _conf = ConfigParser.ConfigParser()
         try:
@@ -65,4 +65,9 @@ class Configuration:
         if _conf.has_option(section, 'input'):
             self.input = _conf.get(section, 'input')
 
-
+    def is_complete(self):
+        if not self.base or not self.release or not self.distro \
+            or not self.openstack or not self.booturl or not self.log:
+            return False
+        else:
+            return True
