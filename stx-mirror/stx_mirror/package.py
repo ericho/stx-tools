@@ -5,6 +5,7 @@
 from collections import MutableMapping
 from stx_exceptions import *
 import os
+import urllib2
 
 try:
     from urllib.parse import urlparse
@@ -80,40 +81,40 @@ class CentOSPackage:
            raise UnsupportedPackageType('Package format error {}'.format(
                                          info))
 
+    def download(self):
+       if self.name is not None and self.url is None and self.script is None:
+            cmd = self._get_yumdownloader_command()
+            return cmd
+            # Execute cmd
+       elif self.name is not None and self.url is not None and self.script is None:
+            self._download_url()
+       elif self.name is not None and self.url is not None and self.script is not None:
+            self._download_url()
+            self._postprocessing()
+
+    def _get_yumdownloader_command(self):
+        downloader = 'sudo -E yumdownloader -q -C --releasever=7'
+        pkg, arch = self._get_package_and_arch()
+        if arch == 'src':
+            package_dir = '--destdir {}/Source'.format(self._basedir)
+            arch = '--source'
+        else:
+            package_dir = '--destdir {}/Binary/{}'.format(self._basedir, arch)
+            arch = '-x \*i686 --archlist=noarch,x86_64'
+        cmd = '{} {} {} {}'.format(downloader, arch, pkg, package_dir)
+        return cmd
+
+    def _download_url(self):
+        filedata = urllib2.urlopen(self.url)
+        datatowrite = filedata.read()
+        with open(self.name, 'wb') as f:
+            f.write(datatowrite)
+
     def _get_package_and_arch(self):
         base, ext = os.path.splitext(self.name)
         _package, _arch = os.path.splitext(base)
         _arch = _arch.replace('.','')
         return _package, _arch
-
-    def download(self):
-       cmd = ''
-       if self.name is not None and self.url is None and self.script is None:
-            downloader = 'sudo -E yumdownloader -q -C --releasever=7'
-            pkg, arch = self._get_package_and_arch()
-            if arch == 'src':
-                package_dir = '--destdir {}/Source'.format(self._basedir)
-                arch = '--source'
-            else:
-                package_dir = '--destdir {}/Binary/{}'.format(self._basedir, arch)
-                arch = '-x \*i686 --archlist=noarch,x86_64'
-            cmd = '{} {} {} {}'.format(downloader, arch, pkg, package_dir)
-       elif self.name is not None and self.url is not None and self.script is None:
-            import urllib2
-            #proxy = urllib2.ProxyHandler({'http': 'http://proxy-chain.intel.com:911'})
-            #opener = urllib2.build_opener(proxy)
-            #urllib2.install_opener(opener)
-            filedata = urllib2.urlopen(self.url)
-            datatowrite = filedata.read()
-            with open(self.name, 'wb') as f:
-                f.write(datatowrite)
-       elif self.name is not None and self.url is not None and self.script is not None:
-            #import urllib2
-            #response = urllib2.urlopen(self.url)
-            #html = response.read()
-            #self._postprocessing()
-            pass
-       return cmd
 
     def _postprocessing(self):
         pass
