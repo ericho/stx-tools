@@ -99,7 +99,7 @@ class CentOSPackage:
             self._postprocessing()
 
     def _get_yumdownloader_command(self):
-        downloader = 'sudo -E yumdownloader -q -C --releasever=7'
+        downloader = 'yumdownloader -q -c yum.conf --releasever=7'
         pkg, arch = self._get_package_and_arch()
         if arch == 'src':
             package_dir = '--destdir {}/Source'.format(self._basedir)
@@ -111,12 +111,22 @@ class CentOSPackage:
         return cmd
 
     def _download_url(self):
+        _, arch = self._get_package_and_arch()
+        if arch == 'src':
+            package_dir = '{}/Source'.format(self._basedir)
+        else:
+            package_dir = '{}/Binary/{}'.format(self._basedir, arch)
+
+        if not os.path.exists(package_dir):
+            os.makedirs(package_dir)
+
         try:
             filedata = urllib2.urlopen(self.url)
         except urllib2.URLError as e:
-            raise DownloadError(e)
+            raise DownloadError("URLError: {}".format(e))
+
         datatowrite = filedata.read()
-        with open(self.name, 'wb') as f:
+        with open('{}/{}'.format(package_dir,self.name), 'wb') as f:
             f.write(datatowrite)
 
     def _get_package_and_arch(self):
