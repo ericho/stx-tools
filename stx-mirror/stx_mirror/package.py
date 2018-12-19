@@ -6,6 +6,7 @@ from collections import MutableMapping
 from stx_exceptions import *
 import os
 import urllib2
+from helpers import Komander
 
 try:
     from urllib.parse import urlparse
@@ -82,18 +83,23 @@ class CentOSPackage:
                                          info))
 
     def download(self):
-       if self.name is not None and self.url is None and self.script is None:
+       if self.name is not None and self.url is None \
+            and self.script is None:
             cmd = self._get_yumdownloader_command()
-            return cmd
-            # Execute cmd
-       elif self.name is not None and self.url is not None and self.script is None:
+            cmd_exec = Komander()
+            results = cmd_exec.run(cmd)
+            if results.retcode != 0:
+                raise DownloadError('Command: \'{}\' failed with return code: {}'.format(results.cmd, results.retcode))
+       elif self.name is not None and self.url is not None \
+            and self.script is None:
             self._download_url()
-       elif self.name is not None and self.url is not None and self.script is not None:
+       elif self.name is not None and self.url is not None \
+            and self.script is not None:
             self._download_url()
             self._postprocessing()
 
     def _get_yumdownloader_command(self):
-        downloader = 'sudo -E yumdownloader -q -C --releasever=7'
+        downloader = 'yumdownloader -q -c yum.conf --releasever=7'
         pkg, arch = self._get_package_and_arch()
         if arch == 'src':
             package_dir = '--destdir {}/Source'.format(self._basedir)
@@ -105,9 +111,22 @@ class CentOSPackage:
         return cmd
 
     def _download_url(self):
-        filedata = urllib2.urlopen(self.url)
+        _, arch = self._get_package_and_arch()
+        if arch == 'src':
+            package_dir = '{}/Source'.format(self._basedir)
+        else:
+            package_dir = '{}/Binary/{}'.format(self._basedir, arch)
+
+        if not os.path.exists(package_dir):
+            os.makedirs(package_dir)
+
+        try:
+            filedata = urllib2.urlopen(self.url)
+        except urllib2.URLError as e:
+            raise DownloadError("URLError: {}".format(e))
+
         datatowrite = filedata.read()
-        with open(self.name, 'wb') as f:
+        with open('{}/{}'.format(package_dir,self.name), 'wb') as f:
             f.write(datatowrite)
 
     def _get_package_and_arch(self):
