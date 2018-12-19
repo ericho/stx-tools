@@ -20,7 +20,7 @@ class Configuration:
             _conf.read(conf)
         except ConfigParser.MissingSectionHeaderError as e:
             raise UnsupportedConfigurationType(e)
-        
+
         sections = _conf.sections()
         if not sections:
             raise UnsupportedConfigurationType("Zero sections")
@@ -52,7 +52,7 @@ class Configuration:
 
         if _conf.has_option(section, 'booturl'):
            self.booturl = _conf.get(section, 'booturl')
-        
+
         if _conf.has_option(section, 'maxthreads'):
             try:
                 self.maxthreads = int(_conf.get(section, 'maxthreads'))

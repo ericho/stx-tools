@@ -1,5 +1,5 @@
-- name: CentOS
-  packages:
+type: centos
+rpms:
   - abattis-cantarell-fonts-0.0.25-1.el7.noarch.rpm
   - acl-2.2.51-14.el7.x86_64.rpm
   - acpica-tools-20160527-1.el7.x86_64.rpm
@@ -1936,8 +1936,7 @@
   - zlib-devel-1.2.7-17.el7.x86_64.rpm
   - zvbi-fonts-0.2.35-1.el7.noarch.rpm
   - zziplib-0.13.62-5.el7.x86_64.rpm
-- name: CentOS3rdParty
-  packages:
+rpms3rdparty:
   - adwaita-cursor-theme-3.26.0-1.el7.noarch.rpm
   - adwaita-icon-theme-3.26.0-1.el7.noarch.rpm
   - alsa-lib-1.1.4.1-2.el7.x86_64.rpm
@@ -2084,8 +2083,7 @@
   - util-linux-2.23.2-52.el7.x86_64.rpm
   - valgrind-3.13.0-10.el7.x86_64.rpm
   - valgrind-devel-3.13.0-10.el7.x86_64.rpm
-- name: 3rdParty
-  packages:
+3rdparty:
   - http://cbs.centos.org/kojifiles/packages/go-srpm-macros/2/3.el7/noarch/go-srpm-macros-2-3.el7.noarch.rpm
   - http://cbs.centos.org/kojifiles/packages/golang/1.10.2/1.el7/x86_64/golang-1.10.2-1.el7.x86_64.rpm
   - http://cbs.centos.org/kojifiles/packages/golang/1.10.2/1.el7/x86_64/golang-bin-1.10.2-1.el7.x86_64.rpm
@@ -2109,8 +2107,7 @@
   - https://kojipkgs.fedoraproject.org/packages/python-wheel/0.31.1/3.fc30/noarch/python3-wheel-0.31.1-3.fc30.noarch.rpm
   - https://kojipkgs.fedoraproject.org/packages/python-pip/9.0.3/6.fc29/noarch/python2-pip-9.0.3-6.fc29.noarch.rpm
   - https://kojipkgs.fedoraproject.org/packages/python-pip/9.0.3/6.fc29/noarch/python3-pip-9.0.3-6.fc29.noarch.rpm
-- name: Boot
-  packages:
+bootfiles:
   - http://vault.centos.org/7.4.1708/os/x86_64/EFI/BOOT/grub.cfg
   - http://vault.centos.org/7.4.1708/os/x86_64/EFI/BOOT/BOOTX64.EFI
   - http://vault.centos.org/7.4.1708/os/x86_64/EFI/BOOT/grubx64.efi
@@ -2128,8 +2125,7 @@
   - http://vault.centos.org/7.4.1708/os/x86_64/isolinux/splash.png
   - http://vault.centos.org/7.4.1708/os/x86_64/isolinux/isolinux.cfg
   - http://vault.centos.org/7.4.1708/os/x86_64/isolinux/vesamenu.c32
-- name: Customized
-  packages:
+tarballs:
   - http://http.debian.net/debian/pool/main/d/dpkg/dpkg_1.18.24.tar.xz
   - http://www.linbit.com/downloads/drbd/8.4/archive/drbd-8.4.3.tar.gz
   - http://www.linbit.com/downloads/drbd/8.4/drbd-8.4.7-1.tar.gz
