@@ -34,21 +34,23 @@ class PackageList(MutableMapping):
         return len(self.__dict__)
 
 
+class Package:
+    pass
+
 class CentOSPackageList(PackageList):
     """ """
+
     def __init__(self, data, config):
-        self.data = data
-        self.config = config
-        for key in self.data:
+        for key in data:
             if key != 'type':
                 self.__setitem__(key,
-                                 self._to_centos_pkgs(self.data[key], config))
+                                 self._to_centos_pkgs(data[key], config))
 
     def _to_centos_pkgs(self, list_packages, config):
         return [CentOSPackage(i, config) for i in list_packages]
 
 
-class CentOSPackage:
+class CentOSPackage(Package):
     """ """
     def __init__(self, info, config):
         self.name = None
