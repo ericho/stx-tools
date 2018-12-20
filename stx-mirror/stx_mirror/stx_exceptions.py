@@ -28,3 +28,6 @@ class MissingConfigurationValue(StxException):
 
 class DownloadError(StxException):
     pass
+
+class UnsupportedDownloadPackageType(StxException):
+    pass

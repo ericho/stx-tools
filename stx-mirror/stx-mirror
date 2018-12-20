@@ -1,6 +1,32 @@
 #!/usr/bin/python
+#
+# SPDX-License-Identifier: Apache-2.0
+#
 
-import stx_mirror.mirror_downloader
+import sys
+
+from stx_mirror import Configuration
+from stx_mirror import YamlParser
+from stx_mirror import download_all
+from stx_mirror import *
+
+DEFAULT_CONFIG = 'settings.cfg'
+
+def main():
+   cfg = Configuration()
+   cfg.load(DEFAULT_CONFIG)
+   yp = YamlParser()
+   try:
+      pkgs = yp.load(cfg)
+   except StxException as e:
+      print e
+      sys.exit(1)
+
+   res = download_all(pkgs)
+
+   for r in res:
+      if not r.success:
+         print "Error downloading {} with : {}".format(r.pkg.name, r.e)
 
 if __name__ == '__main__':
-   stx_mirror.mirror_downloader.main()
+   main()
