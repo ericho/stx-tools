@@ -20,9 +20,9 @@ def mocked_urllib2_urlopen(*args, **kwargs):
         def read(self):
             return self.data
     if args[0].startswith('http://'):
-        return MockResponse('Mock downloaded URL {}\n'.format(args[0]), 0)
+        return MockResponse('Mock downloaded URL\n{}\n'.format(args[0]), 0)
     else:
-        return MockResponse('Mock downloaded URL FAIL {}\n'.format(args[0]), 1)
+        return MockResponse('Mock downloaded URL FAIL\n{}\n'.format(args[0]), 1)
 
 def mocked_komander_run(*args, **kwargs):
     class MockResponse:
@@ -31,10 +31,30 @@ def mocked_komander_run(*args, **kwargs):
             self.retcode = retcode
         def read(self):
             return self.cmd
-    if args[0].find('doesntexist') == -1 :
-        return MockResponse('Mock downloaded RPM {}\n'.format(args[0]), 0)
-    else:
-        return MockResponse('Mock downloaded RPM FAIL {}\n'.format(args[0]), 1)
+    if 'anaconda-21' in args[0]:
+        m = MockResponse('Mock downloaded RPM\n{}\n'.format(args[0]), 0)
+        package_dir = 'output/stx-r1/CentOS/pike/Source'
+        datatowrite = m.cmd
+        if not os.path.exists(package_dir):
+            os.makedirs(package_dir)
+        with open('{}/{}'.format(package_dir,
+                  'anaconda-21.48.22.121-1.el7.centos.src.rpm'),
+                  'wb') as f:
+            f.write(datatowrite)
+        return m
+    elif 'acl-2' in args[0]:
+        m = MockResponse('Mock downloaded RPM\n{}\n'.format(args[0]), 0)
+        package_dir = 'output/stx-r1/CentOS/pike/Binary/x86_64'
+        datatowrite = m.cmd
+        if not os.path.exists(package_dir):
+            os.makedirs(package_dir)
+        with open('{}/{}'.format(package_dir,
+                  'acl-2.2.51-14.el7.x86_64.rpm'),
+                  'wb') as f:
+            f.write(datatowrite)
+        return m
+    elif args[0].find('doesntexist'):
+        return MockResponse('Mock downloaded RPM FAIL\n{}\n'.format(args[0]), 1)
 
 def create_configuration_for_testing_centos_package():
         test_cfg = """[DownloadSettings]
@@ -148,6 +168,10 @@ class TestCentOSPackage(unittest.TestCase):
             cmd = pkg.download()
         except Exception as e:
             self.assertTrue(False, 'Exception received: {}'.format(e))
+        pkgdir = 'output/stx-r1/CentOS/pike/Binary/x86_64/acl-2.2.51-14.el7.x86_64.rpm'
+        assert os.path.exists(pkgdir) == 1
+        os.remove(pkgdir)
+
 
     @mock.patch('package.Komander.run', side_effect=mocked_komander_run)
     def test_download_rpm_src_success(self, mocked_run):
@@ -158,6 +182,9 @@ class TestCentOSPackage(unittest.TestCase):
             cmd = pkg.download()
         except Exception as e:
             self.assertTrue(False, 'Exception received: {}'.format(e))
+        pkgdir = 'output/stx-r1/CentOS/pike/Source/anaconda-21.48.22.121-1.el7.centos.src.rpm'
+        assert os.path.exists(pkgdir) == 1
+        os.remove(pkgdir)
 
     @mock.patch('package.urllib2.urlopen', side_effect=mocked_urllib2_urlopen)
     def test_download_url_success(self, mock_urlopen):
@@ -165,7 +192,9 @@ class TestCentOSPackage(unittest.TestCase):
         url = 'http://cbs.centos.org/kojifiles/packages/go-srpm-macros/2/3.el7/noarch/go-srpm-macros-2-3.el7.noarch.rpm'
         pkg = CentOSPackage(url, conf)
         pkg.download()
-        os.remove('output/stx-r1/CentOS/pike/Binary/noarch/go-srpm-macros-2-3.el7.noarch.rpm')
+        pkgdir = 'output/stx-r1/CentOS/pike/Binary/noarch/go-srpm-macros-2-3.el7.noarch.rpm'
+        assert os.path.exists(pkgdir) == 1
+        os.remove(pkgdir)
 
     @mock.patch('package.Komander.run', side_effect=mocked_komander_run)
     def test_download_rpm_x86_failure(self, mocked_run):
@@ -180,7 +209,7 @@ class TestCentOSPackage(unittest.TestCase):
     @mock.patch('package.Komander.run', side_effect=mocked_komander_run)
     def test_download_rpm_src_failure(self, mocked_run):
         conf = create_configuration_for_testing_centos_package()
-        rpm = 'anaconda-21.48.22.121-1.el7.centos.src.rpm'
+        rpm = 'doesntexist-21.48.22.121-1.el7.centos.src.rpm'
         pkg = CentOSPackage(rpm, conf)
         try:
             cmd = pkg.download()
