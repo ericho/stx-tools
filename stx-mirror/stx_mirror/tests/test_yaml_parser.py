@@ -2,13 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-import unittest
+import yaml
+import tempfile
+
+from test_common import StxTest
 from yaml_parser import YamlParser
 from yaml_parser import CentOSPackageList
 from yaml_parser import CentOSPackage
 from stx_exceptions import *
-import yaml
-import tempfile
 from configuration import Configuration
 
 def create_configuration_for_testing_yaml(file_name):
@@ -38,7 +39,7 @@ class TempFiles:
         self.tmp_file.close()
 
 
-class TestYamlParser(unittest.TestCase):
+class TestYamlParser(StxTest):
 
     def test_load_unsupported_config_file(self):
         yp = YamlParser()

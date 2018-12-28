@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-import unittest
+from test_common import StxTest
 
 from package import CentOSPackage
 from threadpool import download, download_all, PackageResult
@@ -23,7 +23,7 @@ def update_download(pkgs, f):
             l.download = f
 
 
-class TestThreadPool(unittest.TestCase):
+class TestThreadPool(StxTest):
 
     def test_download_all_convert_dict_to_lists(self):
         test_yaml = """type: centos

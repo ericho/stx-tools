@@ -31,3 +31,6 @@ class DownloadError(StxException):
 
 class UnsupportedDownloadPackageType(StxException):
     pass
+
+class SetupError(StxException):
+    pass

@@ -1,8 +1,8 @@
-import unittest
+from test_common import StxTest
 from helpers import Komander
 
 
-class TestKomander(unittest.TestCase):
+class TestKomander(StxTest):
 
     def test_successful_command(self):
         test_command = 'uname'
@@ -10,13 +10,13 @@ class TestKomander(unittest.TestCase):
         results = obj.run(test_command)
         self.assertEquals(results.retcode, 0)
         self.assertEquals(results.stdout, 'Linux\n')
-        
+
     def test_unsuccessful_command(self):
         test_command = 'ls3'
         obj = Komander()
-        results = obj.run(test_command) 
+        results = obj.run(test_command)
         self.assertEquals(results.retcode, 127)
-    
+
     def test_timeout_command(self):
         test_command = 'sleep 5'
         obj = Komander()
