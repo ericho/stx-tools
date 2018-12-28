@@ -2,23 +2,21 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-import unittest
-from package import CentOSPackage
-from stx_exceptions import *
-from test_yaml_parser import TempFiles
-from configuration import Configuration
 import os
 import mock
-import pdb
-import urllib2
+import requests
 
-def mocked_urllib2_urlopen(*args, **kwargs):
+from test_common import StxTest
+from package import CentOSPackage, CentOSPackageList
+from stx_exceptions import *
+from test_yaml_parser import TempFiles, create_configuration_for_testing_yaml
+from configuration import Configuration
+
+def mocked_requests_get(*args, **kwargs):
     class MockResponse:
         def __init__(self, data, retcode):
-            self.data = data
             self.retcode = retcode
-        def read(self):
-            return self.data
+            self.content = data
     if args[0].startswith('http://'):
         return MockResponse('Mock downloaded URL\n{}\n'.format(args[0]), 0)
     else:
@@ -72,8 +70,42 @@ input: ../manifests/manifest.yaml"""
         tmp_test_file.close()
         return config
 
+run_setup_retcode = 0
 
-class TestCentOSPackage(unittest.TestCase):
+def mocked_komander(cmd, timeout=0):
+    class MockResponse:
+        def __init__(self, data, retcode):
+            self.cmd = data
+            self.retcode = retcode
+            self.stderr = "Generic error"
+        def read(self):
+            return self.cmd
+
+    return MockResponse("Some generic cmd", run_setup_retcode)
+
+
+class TestCentOSPackageList(StxTest):
+
+    @mock.patch('package.Komander.run', side_effect=mocked_komander)
+    def test_basic_setup(self, mocked_run):
+        cfg = create_configuration_for_testing_centos_package()
+        pkgs = CentOSPackageList([], cfg)
+        try:
+            pkgs.setup()
+        except StxException as e:
+            self.assertTrue(False, "Exception received {}".format(e))
+
+    @mock.patch('package.Komander.run', side_effect=mocked_komander)
+    def test_basic_setup_command_failed(self, mocked_run):
+        cfg = create_configuration_for_testing_centos_package()
+        pkgs = CentOSPackageList([], cfg)
+        global run_setup_retcode
+        run_setup_retcode = 1
+        with self.assertRaises(SetupError):
+            pkgs.setup()
+
+
+class TestCentOSPackage(StxTest):
 
     def test_new_package_basedir(self):
         conf = create_configuration_for_testing_centos_package()
@@ -186,7 +218,7 @@ class TestCentOSPackage(unittest.TestCase):
         assert os.path.exists(pkgdir) == 1
         os.remove(pkgdir)
 
-    @mock.patch('package.urllib2.urlopen', side_effect=mocked_urllib2_urlopen)
+    @mock.patch('package.requests.get', side_effect=mocked_requests_get)
     def test_download_url_success(self, mock_urlopen):
         conf = create_configuration_for_testing_centos_package()
         url = 'http://cbs.centos.org/kojifiles/packages/go-srpm-macros/2/3.el7/noarch/go-srpm-macros-2-3.el7.noarch.rpm'
@@ -216,7 +248,7 @@ class TestCentOSPackage(unittest.TestCase):
         except DownloadError as e:
             self.assertTrue(True, 'Exception received: {}'.format(e))
 
-    @mock.patch('package.urllib2.urlopen', side_effect=urllib2.URLError('Mocked Error'))
+    @mock.patch('package.requests.get', side_effect=requests.exceptions.RequestException('Mocked Error'))
     def test_download_url_failure(self, mock_urlopen):
         conf = create_configuration_for_testing_centos_package()
         url = 'hhhttp://cbs.centos.org/kojifiles/packages/go-srpm-macros/2/3.el7/noarch/go-srpm-macros-2-3.el7.noarch.rpm'
@@ -225,6 +257,57 @@ class TestCentOSPackage(unittest.TestCase):
             pkg.download()
         except DownloadError as e:
             self.assertTrue(True, 'Exception received: {}'.format(e))
+
+    def test_name_to_destdir(self):
+        conf = create_configuration_for_testing_centos_package()
+        rpm = 'anaconda-21.48.22.121-1.el7.centos.x86_64.rpm'
+        pkg = CentOSPackage(rpm, conf)
+        self.assertEquals('Binary/x86_64', pkg._get_destdir())
+
+        rpm = 'anaconda-21.48.22.121-1.el7.centos.noarch.rpm'
+        pkg = CentOSPackage(rpm, conf)
+        self.assertEquals('Binary/noarch', pkg._get_destdir())
+
+        rpm = 'anaconda-21.48.22.121-1.el7.centos.src.rpm'
+        pkg = CentOSPackage(rpm, conf)
+        self.assertEquals('Source', pkg._get_destdir())
+
+        url = 'http://cbs.centos.org/go-srpm-macros-2-3.el7.noarch.rpm'
+        pkg = CentOSPackage(url, conf)
+        self.assertEquals('Binary/noarch', pkg._get_destdir())
+
+        url = 'http://www.linbit.com/downloads/drbd/8.4/archive/drbd-8.4.3.tar.gz'
+        pkg = CentOSPackage(url, conf)
+        self.assertEquals('downloads', pkg._get_destdir())
+
+        url = 'http://launchpad.net/smart-1.4.1.tar.bz2'
+        pkg = CentOSPackage(url, conf)
+        self.assertEquals('downloads', pkg._get_destdir())
+
+        url = 'http://vault.centos.org/7.4.1708/os/x86_64/EFI/BOOT/grub.cfg'
+        pkg = CentOSPackage(url, conf)
+        self.assertEquals(url, pkg.url)
+        self.assertEquals('Binary/EFI/BOOT', pkg._get_destdir())
+
+        url = 'http://vault.centos.org/7.4.1708/os/x86_64/EFI/BOOT/fonts/unicode.pf2'
+        pkg = CentOSPackage(url, conf)
+        self.assertEquals(url, pkg.url)
+        self.assertEquals('Binary/EFI/BOOT/fonts', pkg._get_destdir())
+
+        url = 'http://vault.centos.org/7.4.1708/os/x86_64/LiveOS/squashfs.img'
+        pkg = CentOSPackage(url, conf)
+        self.assertEquals(url, pkg.url)
+        self.assertEquals('Binary/LiveOS', pkg._get_destdir())
+
+        url = 'http://vault.centos.org/7.4.1708/os/x86_64/images/pxeboot/vmlinuz'
+        pkg = CentOSPackage(url, conf)
+        self.assertEquals(url, pkg.url)
+        self.assertEquals('Binary/images/pxeboot', pkg._get_destdir())
+
+        url = 'http://vault.centos.org/7.4.1708/os/x86_64/isolinux/vmlinuz'
+        pkg = CentOSPackage(url, conf)
+        self.assertEquals(url, pkg.url)
+        self.assertEquals('Binary/isolinux', pkg._get_destdir())
 
     #
     # THIS TEST IS NOT WORKING YET

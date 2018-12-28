@@ -2,10 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+import os
+import requests
+
 from collections import MutableMapping
 from stx_exceptions import *
-import os
-import urllib2
 from helpers import Komander
 
 try:
@@ -13,34 +14,39 @@ try:
 except ImportError:
     from urlparse import urlparse
 
+
 class PackageList(MutableMapping):
     """ """
     def __init__(self, *args, **kwargs):
-        self.__dict__.update(*args, **kwargs)
+        self.store = dict()
+        self.store.update(*args, **kwargs)
 
     def __setitem__(self, key, value):
-        self.__dict__[key] = value
+        self.store[key] = value
 
     def __getitem__(self, key):
-        return self.__dict__[key]
+        return self.store[key]
 
     def __delitem__(self, key):
-        del self.__dict__[key]
+        del self.store[key]
 
     def __iter__(self):
-        return iter(self.__dict__)
+        return iter(self.store)
 
     def __len__(self):
-        return len(self.__dict__)
+        return len(self.store)
 
 
 class Package:
     pass
 
+
 class CentOSPackageList(PackageList):
     """ """
 
     def __init__(self, data, config):
+        self.store = dict()
+        self.config = config
         for key in data:
             if key != 'type':
                 self.__setitem__(key,
@@ -49,20 +55,52 @@ class CentOSPackageList(PackageList):
     def _to_centos_pkgs(self, list_packages, config):
         return [CentOSPackage(i, config) for i in list_packages]
 
+    def setup(self):
+        self.config.log.info("Running setup, this may take some minutes.")
+        # FIXME: Apparently there's no other way to create yum cache than
+        # using sudo. The command below should be fixed in some way to not
+        # force the usage of sudo.
+        cmds = ['which yumdownloader',
+        'sudo yum -c yum.conf makecache']
+        for c in cmds:
+            res = Komander.run(c)
+            if res.retcode != 0:
+                err_msg = "Command \'{}\' failed with {}".format(res.cmd,
+                                                                 res.stderr)
+                raise SetupError(err_msg)
+
 
 class CentOSPackage(Package):
     """ """
+
+    bootfiles = ['grub.cfg',
+                 'BOOTX64.EFI',
+                 'grubx64.efi',
+                 'unicode.pf2',
+                 'squashfs.img',
+                 'initrd.img',
+                 'vmlinuz',
+                 'efiboot.img',
+                 'memtest',
+                 'grub.conf',
+                 'boot.msg',
+                 'isolinux.bin',
+                 'splash.png',
+                 'isolinux.cfg',
+                 'vesamenu.c32']
+
     def __init__(self, info, config):
         self.name = None
         self.url = None
         self.script = None
+        self.config = config
         self._basedir = os.path.join(config.base, config.release,
                                      config.distro, config.openstack)
         if isinstance(info, dict):
             if 'name' not in info and 'url' not in info:
-               raise UnsupportedPackageType('Package is missing name and url')
+               raise UnsupportedPackageType('Missing name and url')
             if 'url' not in info:
-               raise UnsupportedPackageType('Package is missing url')
+               raise UnsupportedPackageType('Missing url')
             self.name = info['name']
             self.url = info['url']
             if 'script' in info:
@@ -85,57 +123,77 @@ class CentOSPackage(Package):
                                          info))
 
     def download(self):
-       if self.name is not None and self.url is None \
-            and self.script is None:
+        self.config.log.info("Downloading {}".format(self.name))
+
+        if self.name is not None and self.url is None \
+           and self.script is None:
             cmd = self._get_yumdownloader_command()
-            cmd_exec = Komander()
-            results = cmd_exec.run(cmd)
+            results = Komander.run(cmd)
             if results.retcode != 0:
-                raise DownloadError('Command: \'{}\' failed with return code: {}'.format(results.cmd, results.retcode))
-       elif self.name is not None and self.url is not None \
-            and self.script is None:
+                err_msg = ("Command: \'{}\' failed"
+                           " with return code: {}".format(results.cmd, results.retcode))
+                raise DownloadError(err_msg)
+        if self.name is not None and self.url is not None:
             self._download_url()
-       elif self.name is not None and self.url is not None \
-            and self.script is not None:
-            self._download_url()
-            self._postprocessing()
+
+            if self.script is not None:
+                self._postprocessing()
 
     def _get_yumdownloader_command(self):
-        downloader = 'yumdownloader -q -c yum.conf --releasever=7'
+        downloader = 'yumdownloader -q -C -c yum.conf --releasever=7'
+        package_dir = '--destdir {}/{}'.format(self._basedir,
+                                               self._get_destdir())
+
         pkg, arch = self._get_package_and_arch()
         if arch == 'src':
-            package_dir = '--destdir {}/Source'.format(self._basedir)
             arch = '--source'
         else:
-            package_dir = '--destdir {}/Binary/{}'.format(self._basedir, arch)
             arch = '-x \*i686 --archlist=noarch,x86_64'
-        cmd = '{} {} {} {}'.format(downloader, arch, pkg, package_dir)
-        return cmd
+        return '{} {} {} {}'.format(downloader, arch, pkg, package_dir)
 
     def _download_url(self):
-        _, arch = self._get_package_and_arch()
-        if arch == 'src':
-            package_dir = '{}/Source'.format(self._basedir)
-        else:
-            package_dir = '{}/Binary/{}'.format(self._basedir, arch)
+        package_dir = "{}/{}/".format(self._basedir,
+                                     self._get_destdir())
 
         if not os.path.exists(package_dir):
-            os.makedirs(package_dir)
+            try:
+                os.makedirs(package_dir)
+            except OSError as e:
+                # Check for file exists error to avoid race
+                # condition when the first threads creates this
+                # directory.
+                if e[0] != 17:
+                    raise e
 
         try:
-            filedata = urllib2.urlopen(self.url)
-        except urllib2.URLError as e:
-            raise DownloadError("URLError: {}".format(e))
+            filedata = requests.get(self.url, allow_redirects=True)
+        except requests.exceptions.RequestException as e:
+            raise DownloadError("DownloadError: {}".format(e))
 
-        datatowrite = filedata.read()
-        with open('{}/{}'.format(package_dir,self.name), 'wb') as f:
-            f.write(datatowrite)
+        with open('{}/{}'.format(package_dir, self.name), 'wb') as f:
+            f.write(filedata.content)
 
     def _get_package_and_arch(self):
         base, ext = os.path.splitext(self.name)
         _package, _arch = os.path.splitext(base)
         _arch = _arch.replace('.','')
         return _package, _arch
+
+    def _get_destdir(self):
+        if self.name.endswith('.rpm'):
+            _, arch = self._get_package_and_arch()
+            return "Source" if arch == 'src' else "Binary/{}".format(arch)
+        elif self.name in self.bootfiles:
+            # This is the special case for the bootfiles. It needs to be
+            # stored at the same folder path as there are in the server.
+            # We assume that this is a x86_64 image and start to retrieve
+            # the path from there.
+            start_idx = self.url.find('x86_64')
+            end_idx = self.url.rfind('/')
+            path = self.url[self.url.find('/', start_idx) + 1:end_idx]
+            return "Binary/{}".format(path)
+        else:
+            return 'downloads'
 
     def _postprocessing(self):
         pass

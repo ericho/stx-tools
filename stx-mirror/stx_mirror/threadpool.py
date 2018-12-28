@@ -3,6 +3,7 @@
 #
 
 from multiprocessing.pool import ThreadPool
+
 from stx_exceptions import DownloadError, UnsupportedDownloadPackageType
 from package import Package
 
@@ -20,9 +21,6 @@ class PackageResult:
 def download(pkg):
     if not isinstance(pkg, Package):
         raise UnsupportedDownloadPackageType
-
-    # TODO: This should be a logger call.
-    print "Downloading {}".format(pkg.name)
 
     result = PackageResult()
     try:
