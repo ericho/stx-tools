@@ -123,6 +123,12 @@ class CentOSPackage(Package):
                                          info))
 
     def download(self):
+        if os.path.exists("{}/{}/{}".format(self._basedir,
+                                            self._get_destdir(),
+                                            self.name)):
+            self.config.log.info("File exists, skipping: {}".format(self.name))
+            return
+
         self.config.log.info("Downloading {}".format(self.name))
 
         if self.name is not None and self.url is None \
