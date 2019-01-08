@@ -1,0 +1,37 @@
+#!/usr/bin/python
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+import sys
+
+from stx_mirror import Configuration
+from stx_mirror import YamlParser
+from stx_mirror import download_all
+from stx_mirror import *
+
+DEFAULT_CONFIG = 'settings.cfg'
+
+def main():
+   cfg = Configuration()
+   cfg.load(DEFAULT_CONFIG)
+
+   cfg.log.info("Initializing...")
+
+   yp = YamlParser()
+
+   try:
+      pkgs = yp.load(cfg)
+      pkgs.setup()
+   except StxException as e:
+      cfg.log.error("Error loading yaml: {}".format(e))
+      sys.exit(1)
+
+   res = download_all(pkgs)
+
+   for r in res:
+      if not r.success:
+         cfg.log.error("Error downloading {} with : {}".format(r.pkg.name, r.e))
+
+if __name__ == '__main__':
+   main()
