@@ -29,6 +29,7 @@ def mocked_komander_run(*args, **kwargs):
             self.retcode = retcode
         def read(self):
             return self.cmd
+
     if 'anaconda-21' in args[0]:
         m = MockResponse('Mock downloaded RPM\n{}\n'.format(args[0]), 0)
         package_dir = 'output/stx-r1/CentOS/pike/Source'
@@ -215,7 +216,7 @@ class TestCentOSPackage(StxTest):
         except Exception as e:
             self.assertTrue(False, 'Exception received: {}'.format(e))
         pkgdir = 'output/stx-r1/CentOS/pike/Source/anaconda-21.48.22.121-1.el7.centos.src.rpm'
-        assert os.path.exists(pkgdir) == 1
+        self.assertTrue(os.path.exists(pkgdir))
         os.remove(pkgdir)
 
     @mock.patch('package.requests.get', side_effect=mocked_requests_get)
@@ -225,7 +226,7 @@ class TestCentOSPackage(StxTest):
         pkg = CentOSPackage(url, conf)
         pkg.download()
         pkgdir = 'output/stx-r1/CentOS/pike/Binary/noarch/go-srpm-macros-2-3.el7.noarch.rpm'
-        assert os.path.exists(pkgdir) == 1
+        self.assertTrue(os.path.exists(pkgdir))
         os.remove(pkgdir)
 
     @mock.patch('package.Komander.run', side_effect=mocked_komander_run)
