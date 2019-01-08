@@ -26,7 +26,7 @@ class Komander(object):
                 time.sleep(0.25)
                 timeout -= 0.25
             p.kill()
-        
+
         p.communicate()
         tmp_stdout.seek(0)
         tmp_stderr.seek(0)

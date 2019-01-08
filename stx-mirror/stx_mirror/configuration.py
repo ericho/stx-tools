@@ -1,6 +1,7 @@
 import ConfigParser
+import logging
+
 from stx_exceptions import *
-import pdb
 
 class Configuration:
     """ """
@@ -11,8 +12,9 @@ class Configuration:
         self.openstack = ""
         self.booturl = "http://vault.centos.org/7.4.1708/os/x86_64/"
         self.maxthreads = 4
-        self.log = "./LogMirrorDownloader.log"
-        self.input = "./manifests/manifest.yaml"
+        self.logfile = "stx-mirror.log"
+        self.input = "manifests/manifest.yaml"
+        self.log = None
 
     def load(self, conf):
         _conf = ConfigParser.ConfigParser()
@@ -60,14 +62,28 @@ class Configuration:
                 raise UnsupportedConfigurationValue(e)
 
         if _conf.has_option(section, 'log'):
-            self.log = _conf.get(section, 'log')
+            self.logfile = _conf.get(section, 'log')
 
         if _conf.has_option(section, 'input'):
             self.input = _conf.get(section, 'input')
 
+        self.set_logger()
+
     def is_complete(self):
         if not self.base or not self.release or not self.distro \
-            or not self.openstack or not self.booturl or not self.log:
+            or not self.openstack or not self.booturl or not self.logfile:
             return False
         else:
             return True
+
+    def set_logger(self):
+        format = "%(asctime)s %(levelname)s - %(message)s"
+        logging.basicConfig(level=logging.INFO,
+                            filename=self.logfile,
+                            filemode='w',
+                            format=format)
+        console = logging.StreamHandler()
+        console.setLevel(logging.INFO)
+        console.setFormatter(logging.Formatter(format))
+        logging.getLogger().addHandler(console)
+        self.log = logging.getLogger()
