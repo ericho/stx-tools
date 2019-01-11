@@ -4,6 +4,7 @@
 #
 
 import sys
+import os
 
 from stx_mirror import Configuration
 from stx_mirror import YamlParser
@@ -13,6 +14,11 @@ from stx_mirror import *
 DEFAULT_CONFIG = 'settings.cfg'
 
 def main():
+
+   if os.getuid() == 0:
+      print "Please don't run this script as root."
+      sys.exit(1)
+
    cfg = Configuration()
    cfg.load(DEFAULT_CONFIG)
 
