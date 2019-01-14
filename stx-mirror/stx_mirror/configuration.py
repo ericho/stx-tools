@@ -15,6 +15,7 @@ class Configuration:
         self.logfile = "stx-mirror.log"
         self.input = "manifests/manifest.yaml"
         self.log = None
+        self.cli_args = None
 
     def load(self, conf):
         _conf = ConfigParser.ConfigParser()
@@ -34,8 +35,11 @@ class Configuration:
         if not options:
             raise UnsupportedConfigurationType("Zero options")
 
-        if _conf.has_option(section, 'base'):
-            self.base = _conf.get(section, 'base')
+        if self.cli_args and self.cli_args.output:
+            self.base = self.cli_args.output
+        else:
+            if _conf.has_option(section, 'base'):
+                self.base = _conf.get(section, 'base')
 
         if _conf.has_option(section, 'release'):
             self.release = _conf.get(section, 'release')
@@ -87,3 +91,6 @@ class Configuration:
         console.setFormatter(logging.Formatter(format))
         logging.getLogger().addHandler(console)
         self.log = logging.getLogger()
+
+    def set_cli_args(self, args):
+        self.cli_args = args

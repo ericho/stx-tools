@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+import argparse
 import sys
 import os
 
@@ -13,14 +14,31 @@ from stx_mirror import *
 
 DEFAULT_CONFIG = 'settings.cfg'
 
+parser = argparse.ArgumentParser(description='The StarlingX mirror downloader.')
+parser.add_argument('-o', '--output', nargs='?',
+                    help='The directory to store the downloaded mirror',
+                    default=os.getcwd())
+parser.add_argument('-u', '--upstream',
+                    help='Download files first from upstream repositories.',
+                    action='store_true')
+parser.add_argument('-c', '--official',
+                    help='Download files first from official repositories.',
+                    action='store_true')
+parser.add_argument('-p', '--prune',
+                    help='Prune all files not present in package list.',
+                    action='store_true')
+
 def main():
+   args = parser.parse_args()
 
    if os.getuid() == 0:
       print "Please don't run this script as root."
       sys.exit(1)
 
    cfg = Configuration()
+   cfg.set_cli_args(args)
    cfg.load(DEFAULT_CONFIG)
+
 
    cfg.log.info("Initializing...")
 
