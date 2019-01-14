@@ -27,6 +27,7 @@ def mocked_komander_run(*args, **kwargs):
         def __init__(self, data, retcode):
             self.cmd = data
             self.retcode = retcode
+            self.stdout = ''
         def read(self):
             return self.cmd
 
@@ -79,6 +80,7 @@ def mocked_komander(cmd, timeout=0):
             self.cmd = data
             self.retcode = retcode
             self.stderr = "Generic error"
+            self.stdout = 'Generic stdout'
         def read(self):
             return self.cmd
 
