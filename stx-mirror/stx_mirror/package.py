@@ -69,6 +69,29 @@ class CentOSPackageList(PackageList):
                                                                  res.stderr)
                 raise SetupError(err_msg)
 
+    def prune(self):
+        self.config.log.info("Start pruning")
+        dir_lst = self._generate_dir_list()
+        yaml_lst = self._generate_name_list()
+        to_remove = [x for x in dir_lst if x not in yaml_lst]
+        for x in to_remove:
+            fname = os.path.basename(x)
+            self.config.log.info("Not in YAML, removing: {}".format(fname))
+            os.remove(x)
+
+    def _generate_name_list(self):
+        lst = self.values()
+        flat_list = [item.pkg_file for sublist in lst for item in sublist]
+        return flat_list
+
+    def _generate_dir_list(self):
+        lst = []
+        path = self.config.base
+        for root, _ ,f_names in os.walk(path):
+            if f_names:
+                lst.extend([os.path.join(root, f_name) for f_name in f_names])
+        return lst
+
 
 class CentOSPackage(Package):
     """ """
@@ -121,11 +144,11 @@ class CentOSPackage(Package):
         else:
            raise UnsupportedPackageType('Package format error {}'.format(
                                          info))
+        self.pkg_file = os.path.join(self._basedir,
+                                     self._get_destdir(),
+                                     self.name)
 
     def download(self):
-        self.pkg_file = "{}/{}/{}".format(self._basedir,
-                                            self._get_destdir(),
-                                            self.name)
         if os.path.exists(self.pkg_file):
             self.config.log.info("File exists, skipping: {}".format(self.name))
             return
@@ -160,8 +183,7 @@ class CentOSPackage(Package):
         return '{} {} {} {}'.format(downloader, arch, pkg, package_dir)
 
     def _download_url(self):
-        package_dir = "{}/{}/".format(self._basedir,
-                                     self._get_destdir())
+        package_dir = os.path.join(self._basedir, self._get_destdir())
 
         if not os.path.exists(package_dir):
             try:

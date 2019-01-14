@@ -57,5 +57,7 @@ def main():
       if not r.success:
          cfg.log.error("Error downloading {} with : {}".format(r.pkg.name, r.e))
 
+   pkgs.prune()
+
 if __name__ == '__main__':
    main()
