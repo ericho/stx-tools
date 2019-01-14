@@ -123,9 +123,10 @@ class CentOSPackage(Package):
                                          info))
 
     def download(self):
-        if os.path.exists("{}/{}/{}".format(self._basedir,
+        self.pkg_file = "{}/{}/{}".format(self._basedir,
                                             self._get_destdir(),
-                                            self.name)):
+                                            self.name)
+        if os.path.exists(self.pkg_file):
             self.config.log.info("File exists, skipping: {}".format(self.name))
             return
 
@@ -144,6 +145,7 @@ class CentOSPackage(Package):
 
             if self.script is not None:
                 self._postprocessing()
+        self._check_gpg_key()
 
     def _get_yumdownloader_command(self):
         downloader = 'yumdownloader -q -C -c yum.conf --releasever=7'
@@ -200,6 +202,13 @@ class CentOSPackage(Package):
             return "Binary/{}".format(path)
         else:
             return 'downloads'
+
+    def _check_gpg_key(self):
+        if os.path.exists(self.pkg_file):
+            cmd = "rpm -K {}".format(self.pkg_file)
+            res = Komander.run(cmd)
+            if res.stdout.find('MISSING') != -1:
+                self.config.log.info("Missing GPG Key {}".format(self.name))
 
     def _postprocessing(self):
         pass
