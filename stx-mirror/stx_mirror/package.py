@@ -65,8 +65,11 @@ class CentOSPackageList(PackageList):
         for c in cmds:
             res = Komander.run(c)
             if res.retcode != 0:
-                err_msg = "Command \'{}\' failed with {}".format(res.cmd,
-                                                                 res.stderr)
+                err_msg = "\'{}\'\n{}\n{}\nretcode: {}\n".format(res.cmd,
+                                                                 res.stdout,
+                                                                 res.stderr,
+                                                                 res.retcode)
+                self.config.log.error(err_msg)
                 raise SetupError(err_msg)
 
     def prune(self):
@@ -160,8 +163,11 @@ class CentOSPackage(Package):
             cmd = self._get_yumdownloader_command()
             results = Komander.run(cmd)
             if results.retcode != 0:
-                err_msg = ("Command: \'{}\' failed"
-                           " with return code: {}".format(results.cmd, results.retcode))
+                err_msg = ("\'{}\'\n{}\n{}\nretcode: {}\n".format(results.cmd,
+                                                                  results.stdout,
+                                                                  results.stderr,
+                                                                  results.retcode))
+                self.config.log.error(err_msg)
                 raise DownloadError(err_msg)
         if self.name is not None and self.url is not None:
             self._download_url()
