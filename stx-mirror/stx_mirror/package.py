@@ -239,4 +239,11 @@ class CentOSPackage(Package):
                 self.config.log.info("Missing GPG Key {}".format(self.name))
 
     def _postprocessing(self):
-        pass
+        res = Komander.run(self.script)
+        if res.retcode != 0:
+            err_msg = "\'{}\'\n{}\n{}\nretcode: {}\n".format(res.cmd,
+                                                             res.stdout,
+                                                             res.stderr,
+                                                             res.retcode)
+            self.config.log.error(err_msg)
+            raise SetupError(err_msg)
