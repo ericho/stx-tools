@@ -44,15 +44,29 @@ def process_lst_file(lst_file):
                 url = line.split('#')[1]
                 _3rdparty.append(url)
             elif line.count('#') > 1 and line[0] != '#':
+                # This section is for tarballs convertion to yaml
                 fields = line.split('#')
-                name = fields[0]
-                script = fields[1]
-                url = fields[2]
-                if name.startswith('!'):
-                    name = name[1:]
-                d = {'name': name,
+                tarball_name = fields[0]
+                directory_name  = fields[1]
+                tarball_url = fields[2]
+                script = ""
+                # If puppet...
+                if tarball_name.startswith('pupp'):
+                    script = script + 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet\n'
+                else:
+                    script = script + 'download_directory=output/stx-r1/CentOS/pike/downloads\n'
+                # Customized vs Others
+                if tarball_name.startswith('!'):
+                    tarball_name = tarball_name[1:]
+                    script = script + "./scripts/custom_script_" + tarball_name + ".sh $tarball_name $directory_name $download_directory\n"
+                else:
+                    script = script + "tarball_name={}\n".format(tarball_name)
+                    script = script + "directory_name={}\n".format(directory_name)
+                    script = script + "./scripts/generic_script.sh $tarball_name $directory_name $download_directory\n"
+                # Generate the dictionary
+                d = {'name': tarball_name,
                      'script': script,
-                     'url': url}
+                     'url': tarball_url}
                 tarballs.append(d)
             elif 'file:' in line:
                 file_dl = line.split(':')[1]
