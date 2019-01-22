@@ -90,8 +90,7 @@ def main():
                     'tarballs': tarballs,
                     'bootfiles': other_dl}
 
-
-    print yaml.dump(parsed_items)
+    print yaml.dump(parsed_items, default_flow_style=False)
 
     return 0
 
