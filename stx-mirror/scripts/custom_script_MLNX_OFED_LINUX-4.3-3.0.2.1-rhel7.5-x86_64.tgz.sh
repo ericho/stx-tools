@@ -4,6 +4,8 @@ tarball_name=$1
 directory_name=$2
 download_directory=$3
 
+pushd $download_directory
+
 pkg_version=$(echo "$tarball_name" | cut -d "-" -f2-3)
 srpm_path="MLNX_OFED_SRC-${pkg_version}/SRPMS/"
 
@@ -30,3 +32,5 @@ fi
 
 rm -rf "MLNX_OFED_SRC-${pkg_version}"
 rm -rf "$directory_name"
+
+popd

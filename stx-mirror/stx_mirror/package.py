@@ -207,7 +207,10 @@ class CentOSPackage(Package):
             raise DownloadError("DownloadError: {}".format(e))
 
         with open('{}/{}'.format(package_dir, self.name), 'wb') as f:
-            f.write(filedata.content)
+            try:
+                f.write(filedata.content)
+            except Exception as e:
+                raise DownloadError("DownloadError: {}".format(e))
 
     def _get_package_and_arch(self):
         base, ext = os.path.splitext(self.name)
@@ -229,7 +232,10 @@ class CentOSPackage(Package):
             path = self.url[self.url.find('/', start_idx) + 1:end_idx]
             return "Binary/{}".format(path)
         else:
-            return 'downloads'
+            if self.name.startswith('pupp'):
+                return 'downloads/puppet'
+            else:
+                return 'downloads'
 
     def _check_gpg_key(self):
         if os.path.exists(self.pkg_file):

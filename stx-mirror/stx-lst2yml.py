@@ -58,7 +58,9 @@ def process_lst_file(lst_file):
                 # Customized vs Others
                 if tarball_name.startswith('!'):
                     tarball_name = tarball_name[1:]
-                    script = script + "./scripts/custom_script_" + tarball_name + ".sh $tarball_name $directory_name $download_directory\n"
+                    script = script + "./scripts/custom_script_{}.sh {} {} $download_directory".format(tarball_name,
+                                                                                                       tarball_name,
+                                                                                                       directory_name)
                 else:
                     script = script + "tarball_name={}\n".format(tarball_name)
                     script = script + "directory_name={}\n".format(directory_name)
