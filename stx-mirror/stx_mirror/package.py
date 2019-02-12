@@ -65,9 +65,35 @@ class CentOSPackageList(PackageList):
         for c in cmds:
             res = Komander.run(c)
             if res.retcode != 0:
-                err_msg = "Command \'{}\' failed with {}".format(res.cmd,
-                                                                 res.stderr)
+                err_msg = "\'{}\'\n{}\n{}\nretcode: {}\n".format(res.cmd,
+                                                                 res.stdout,
+                                                                 res.stderr,
+                                                                 res.retcode)
+                self.config.log.error(err_msg)
                 raise SetupError(err_msg)
+
+    def prune(self):
+        self.config.log.info("Start pruning")
+        dir_lst = self._generate_dir_list()
+        yaml_lst = self._generate_name_list()
+        to_remove = [x for x in dir_lst if x not in yaml_lst]
+        for x in to_remove:
+            fname = os.path.basename(x)
+            self.config.log.info("Not in YAML, removing: {}".format(fname))
+            os.remove(x)
+
+    def _generate_name_list(self):
+        lst = self.values()
+        flat_list = [item.pkg_file for sublist in lst for item in sublist]
+        return flat_list
+
+    def _generate_dir_list(self):
+        lst = []
+        path = self.config.base
+        for root, _ ,f_names in os.walk(path):
+            if f_names:
+                lst.extend([os.path.join(root, f_name) for f_name in f_names])
+        return lst
 
 
 class CentOSPackage(Package):
@@ -121,11 +147,11 @@ class CentOSPackage(Package):
         else:
            raise UnsupportedPackageType('Package format error {}'.format(
                                          info))
+        self.pkg_file = os.path.join(self._basedir,
+                                     self._get_destdir(),
+                                     self.name)
 
     def download(self):
-        self.pkg_file = "{}/{}/{}".format(self._basedir,
-                                            self._get_destdir(),
-                                            self.name)
         if os.path.exists(self.pkg_file):
             self.config.log.info("File exists, skipping: {}".format(self.name))
             return
@@ -137,8 +163,11 @@ class CentOSPackage(Package):
             cmd = self._get_yumdownloader_command()
             results = Komander.run(cmd)
             if results.retcode != 0:
-                err_msg = ("Command: \'{}\' failed"
-                           " with return code: {}".format(results.cmd, results.retcode))
+                err_msg = ("\'{}\'\n{}\n{}\nretcode: {}\n".format(results.cmd,
+                                                                  results.stdout,
+                                                                  results.stderr,
+                                                                  results.retcode))
+                self.config.log.error(err_msg)
                 raise DownloadError(err_msg)
         if self.name is not None and self.url is not None:
             self._download_url()
@@ -160,8 +189,7 @@ class CentOSPackage(Package):
         return '{} {} {} {}'.format(downloader, arch, pkg, package_dir)
 
     def _download_url(self):
-        package_dir = "{}/{}/".format(self._basedir,
-                                     self._get_destdir())
+        package_dir = os.path.join(self._basedir, self._get_destdir())
 
         if not os.path.exists(package_dir):
             try:
@@ -179,7 +207,10 @@ class CentOSPackage(Package):
             raise DownloadError("DownloadError: {}".format(e))
 
         with open('{}/{}'.format(package_dir, self.name), 'wb') as f:
-            f.write(filedata.content)
+            try:
+                f.write(filedata.content)
+            except Exception as e:
+                raise DownloadError("DownloadError: {}".format(e))
 
     def _get_package_and_arch(self):
         base, ext = os.path.splitext(self.name)
@@ -201,7 +232,10 @@ class CentOSPackage(Package):
             path = self.url[self.url.find('/', start_idx) + 1:end_idx]
             return "Binary/{}".format(path)
         else:
-            return 'downloads'
+            if self.name.startswith('pupp'):
+                return 'downloads/puppet'
+            else:
+                return 'downloads'
 
     def _check_gpg_key(self):
         if os.path.exists(self.pkg_file):
@@ -211,4 +245,11 @@ class CentOSPackage(Package):
                 self.config.log.info("Missing GPG Key {}".format(self.name))
 
     def _postprocessing(self):
-        pass
+        res = Komander.run(self.script)
+        if res.retcode != 0:
+            err_msg = "\'{}\'\n{}\n{}\nretcode: {}\n".format(res.cmd,
+                                                             res.stdout,
+                                                             res.stderr,
+                                                             res.retcode)
+            self.config.log.error(err_msg)
+            raise SetupError(err_msg)

@@ -16,8 +16,7 @@ DEFAULT_CONFIG = 'settings.cfg'
 
 parser = argparse.ArgumentParser(description='The StarlingX mirror downloader.')
 parser.add_argument('-o', '--output', nargs='?',
-                    help='The directory to store the downloaded mirror',
-                    default=os.getcwd())
+                    help='The directory to store the downloaded mirror')
 parser.add_argument('-u', '--upstream',
                     help='Download files first from upstream repositories.',
                     action='store_true')
@@ -56,6 +55,8 @@ def main():
    for r in res:
       if not r.success:
          cfg.log.error("Error downloading {} with : {}".format(r.pkg.name, r.e))
+
+   pkgs.prune()
 
 if __name__ == '__main__':
    main()

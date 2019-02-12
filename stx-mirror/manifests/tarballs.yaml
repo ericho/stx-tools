@@ -1,0 +1,573 @@
+tarballs:
+- name: dpkg_1.18.24.tar.xz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=dpkg_1.18.24.tar.xz
+
+    directory_name=dpkg-1.18.24
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: http://http.debian.net/debian/pool/main/d/dpkg/dpkg_1.18.24.tar.xz
+- name: drbd-8.4.3.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=drbd-8.4.3.tar.gz
+
+    directory_name=drbd-8.4.3
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: http://www.linbit.com/downloads/drbd/8.4/archive/drbd-8.4.3.tar.gz
+- name: drbd-8.4.11-1.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=drbd-8.4.11-1.tar.gz
+
+    directory_name=drbd-8.4.11-1
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: http://www.linbit.com/downloads/drbd/8.4/drbd-8.4.11-1.tar.gz
+- name: dtc-1.4.4.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=dtc-1.4.4.tar.gz
+
+    directory_name=dtc-1.4.4
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://www.kernel.org/pub/software/utils/dtc/dtc-1.4.4.tar.gz
+- name: dep-v0.5.0.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=dep-v0.5.0.tar.gz
+
+    directory_name=dep-v0.5.0
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/golang/dep/archive/v0.5.0.tar.gz
+- name: e1000e-3.4.2.1.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=e1000e-3.4.2.1.tar.gz
+
+    directory_name=e1000e-3.4.2.1
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://sourceforge.net/projects/e1000/files/e1000e%20stable/3.4.2.1/e1000e-3.4.2.1.tar.gz
+- name: gnulib-ffc927e.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=gnulib-ffc927e.tar.gz
+
+    directory_name=gnulib-ffc927e
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: http://git.savannah.gnu.org/cgit/gnulib.git/snapshot/gnulib-ffc927eef29016a5219cd969daad8928af6a1f4d.tar.gz
+- name: i40e-2.4.10.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=i40e-2.4.10.tar.gz
+
+    directory_name=i40e-2.4.10
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://sourceforge.net/projects/e1000/files/i40e%20stable/2.4.10/i40e-2.4.10.tar.gz/download
+- name: i40evf-3.5.13.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=i40evf-3.5.13.tar.gz
+
+    directory_name=i40evf-3.5.13
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://sourceforge.net/projects/e1000/files/i40evf%20stable/3.5.13/i40evf-3.5.13.tar.gz/download
+- name: ibsh-0.3e.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=ibsh-0.3e.tar.gz
+
+    directory_name=cgcs-users-1.0
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://sourceforge.net/projects/ibsh/files/ibsh/ibsh-0.3e/ibsh-0.3e.tar.gz/download
+- name: integrity-kmod-e6aef069.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    ./scripts/custom_script_integrity-kmod-e6aef069.tar.gz.sh integrity-kmod-e6aef069.tar.gz
+    integrity $download_directory'
+  url: http://git.infradead.org/users/jjs/linux-tpmdd.git/snapshot/e6aef069b6e97790cb127d5eeb86ae9ff0b7b0e3.tar.gz
+- name: ixgbe-5.3.7.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=ixgbe-5.3.7.tar.gz
+
+    directory_name=ixgbe-5.3.7
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://sourceforge.net/projects/e1000/files/ixgbe%20stable/5.3.7/ixgbe-5.3.7.tar.gz/download
+- name: ixgbevf-4.3.5.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=ixgbevf-4.3.5.tar.gz
+
+    directory_name=ixgbevf-4.3.5
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://sourceforge.net/projects/e1000/files/ixgbevf%20stable/4.3.5/ixgbevf-4.3.5.tar.gz/download
+- name: keycodemapdb-16e5b07.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=keycodemapdb-16e5b07.tar.gz
+
+    directory_name=keycodemapdb
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/CendioOssman/keycodemapdb/tarball/16e5b0787687d8904dad2c026107409eb9bfcb95
+- name: kvm-unit-tests.git-4ea7633.tar.bz2
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=kvm-unit-tests.git-4ea7633.tar.bz2
+
+    directory_name=kvm-unit-tests
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://git.kernel.org/pub/scm/virt/kvm/kvm-unit-tests.git/snapshot/kvm-unit-tests-20171020.tar.gz
+- name: ldapscripts-2.0.8.tgz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=ldapscripts-2.0.8.tgz
+
+    directory_name=ldapscripts-2.0.8
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://sourceforge.net/projects/ldapscripts/files/ldapscripts/ldapscripts-2.0.8/ldapscripts-2.0.8.tgz/download
+- name: libtpms-0.6.0-4f0d59d.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=libtpms-0.6.0-4f0d59d.tar.gz
+
+    directory_name=libtpms-0.6.0
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/stefanberger/libtpms/tarball/c421ca0f4d00c0caceeda8d62c1efb2b7e47db04
+- name: lldpd-0.9.0.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=lldpd-0.9.0.tar.gz
+
+    directory_name=lldpd-0.9.0
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://media.luffy.cx/files/lldpd/lldpd-0.9.0.tar.gz
+- name: mariadb-10.1.28.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    ./scripts/custom_script_mariadb-10.1.28.tar.gz.sh mariadb-10.1.28.tar.gz mariadb-10.1.28
+    $download_directory'
+  url: https://github.com/MariaDB/server/archive/mariadb-10.1.28.tar.gz
+- name: MLNX_OFED_LINUX-4.2-1.2.0.0-rhel7.4-x86_64.tgz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    ./scripts/custom_script_MLNX_OFED_LINUX-4.2-1.2.0.0-rhel7.4-x86_64.tgz.sh MLNX_OFED_LINUX-4.2-1.2.0.0-rhel7.4-x86_64.tgz
+    MLNX_OFED_LINUX-4.2-1.2.0.0-rhel7.4-x86_64 $download_directory'
+  url: http://www.mellanox.com/downloads/ofed/MLNX_OFED-4.2-1.2.0.0/MLNX_OFED_LINUX-4.2-1.2.0.0-rhel7.4-x86_64.tgz
+- name: MLNX_OFED_LINUX-4.3-1.0.1.0-rhel7.4-x86_64.tgz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    ./scripts/custom_script_MLNX_OFED_LINUX-4.3-1.0.1.0-rhel7.4-x86_64.tgz.sh MLNX_OFED_LINUX-4.3-1.0.1.0-rhel7.4-x86_64.tgz
+    MLNX_OFED_LINUX-4.3-1.0.1.0-rhel7.4-x86_64 $download_directory'
+  url: http://www.mellanox.com/downloads/ofed/MLNX_OFED-4.3-1.0.1.0/MLNX_OFED_LINUX-4.3-1.0.1.0-rhel7.4-x86_64.tgz
+- name: MLNX_OFED_LINUX-4.3-3.0.2.1-rhel7.5-x86_64.tgz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    ./scripts/custom_script_MLNX_OFED_LINUX-4.3-3.0.2.1-rhel7.5-x86_64.tgz.sh MLNX_OFED_LINUX-4.3-3.0.2.1-rhel7.5-x86_64.tgz
+    MLNX_OFED_LINUX-4.3-3.0.2.1-rhel7.5-x86_64 $download_directory'
+  url: http://www.mellanox.com/downloads/ofed/MLNX_OFED-4.3-3.0.2.1/MLNX_OFED_LINUX-4.3-3.0.2.1-rhel7.5-x86_64.tgz
+- name: python-cephclient-v0.1.0.5.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=python-cephclient-v0.1.0.5.tar.gz
+
+    directory_name=python-cephclient-0.1.0.5
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/dmsimard/python-cephclient/archive/v0.1.0.5.tar.gz
+- name: python-setuptools-v38.5.1.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=python-setuptools-v38.5.1.tar.gz
+
+    directory_name=setuptools-38.5.1
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/pypa/setuptools/archive/v38.5.1.tar.gz
+- name: python-smartpm-1.4.1.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=python-smartpm-1.4.1.tar.gz
+
+    directory_name=smart-1.4.1
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: http://launchpad.net/smart/trunk/1.4.1/+download/smart-1.4.1.tar.bz2
+- name: qat1.7.upstream.l.1.0.3-42.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    ./scripts/custom_script_qat1.7.upstream.l.1.0.3-42.tar.gz.sh qat1.7.upstream.l.1.0.3-42.tar.gz
+    quickassist $download_directory'
+  url: https://01.org/sites/default/files/downloads/intelr-quickassist-technology/qat1.7.upstream.l.1.0.3-42.tar.gz
+- name: requests-toolbelt-0.5.1.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=requests-toolbelt-0.5.1.tar.gz
+
+    directory_name=requests-toolbelt-0.5.1
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/requests/toolbelt/archive/0.5.1.tar.gz
+- name: rpm-4.14.0.tar.bz2
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=rpm-4.14.0.tar.bz2
+
+    directory_name=rpm-4.14.0
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://ftp.osuosl.org/pub/rpm/releases/rpm-4.14.x/rpm-4.14.0.tar.bz2
+- name: swtpm-0.1.0-253eac5.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=swtpm-0.1.0-253eac5.tar.gz
+
+    directory_name=swtpm-0.1.0
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/stefanberger/swtpm/tarball/1303be7d03294fb02204cb8242f366cbf0da076d
+- name: tpm-kmod-e6aef069.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    ./scripts/custom_script_tpm-kmod-e6aef069.tar.gz.sh tpm-kmod-e6aef069.tar.gz tpm
+    $download_directory'
+  url: http://git.infradead.org/users/jjs/linux-tpmdd.git/snapshot/e6aef069b6e97790cb127d5eeb86ae9ff0b7b0e3.tar.gz
+- name: spectre-meltdown-checker-0.37+-5cc77741.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=spectre-meltdown-checker-0.37+-5cc77741.tar.gz
+
+    directory_name=spectre-meltdown-checker
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/speed47/spectre-meltdown-checker/tarball/5cc77741af1d2f52140aa9f89339f56b6c4b6783
+- name: puppet-boolean-22b726dd78b0a60a224cc7054aebbf28e9306f62.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet
+
+    tarball_name=puppet-boolean-22b726dd78b0a60a224cc7054aebbf28e9306f62.tar.gz
+
+    directory_name=puppet-boolean
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/voxpupuli/puppet-boolean/tarball/22b726dd78b0a60a224cc7054aebbf28e9306f62
+- name: puppet-dnsmasq-cff07e90890662972c97684a2baee964f68ff3ed.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet
+
+    tarball_name=puppet-dnsmasq-cff07e90890662972c97684a2baee964f68ff3ed.tar.gz
+
+    directory_name=packstack/puppet/modules/dnsmasq/
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/procore/puppet-dnsmasq/tarball/cff07e90890662972c97684a2baee964f68ff3ed
+- name: puppet-filemapper-9b53310278e76827bbe12a36cc6470d77071abb2.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet
+
+    tarball_name=puppet-filemapper-9b53310278e76827bbe12a36cc6470d77071abb2.tar.gz
+
+    directory_name=packstack/puppet/modules/filemapper
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/voxpupuli/puppet-filemapper/tarball/9b53310278e76827bbe12a36cc6470d77071abb2
+- name: puppetlabs-create_resources-4639819a7f3a4fa9310d2ba583c63e467df7e2c3.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet
+
+    tarball_name=puppetlabs-create_resources-4639819a7f3a4fa9310d2ba583c63e467df7e2c3.tar.gz
+
+    directory_name=packstack/puppet/modules/create_resources
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/puppetlabs/puppetlabs-create_resources/tarball/4639819a7f3a4fa9310d2ba583c63e467df7e2c3
+- name: puppetlabs-drbd-496b3ba9cd74a2d12636f9e90a718739a5451169.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet
+
+    tarball_name=puppetlabs-drbd-496b3ba9cd74a2d12636f9e90a718739a5451169.tar.gz
+
+    directory_name=puppetlabs-drbd
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/voxpupuli/puppet-drbd/tarball/496b3ba9cd74a2d12636f9e90a718739a5451169
+- name: puppetlabs-lvm-d0283da637ae24550fb4ba109a48ef8d5d8c8b84.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet
+
+    tarball_name=puppetlabs-lvm-d0283da637ae24550fb4ba109a48ef8d5d8c8b84.tar.gz
+
+    directory_name=packstack/puppet/modules/lvm
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/puppetlabs/puppetlabs-lvm/tarball/d0283da637ae24550fb4ba109a48ef8d5d8c8b84
+- name: puppetlabs-postgresql-d022a56b28b2174456fc0f6adc51a4b54493afad.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet
+
+    tarball_name=puppetlabs-postgresql-d022a56b28b2174456fc0f6adc51a4b54493afad.tar.gz
+
+    directory_name=puppetlabs-postgresql
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/puppetlabs/puppetlabs-postgresql/tarball/d022a56b28b2174456fc0f6adc51a4b54493afad
+- name: puppet-ldap-480f13af6d17d1d3fcf0dc7b4bd04b49fa4099e1.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet
+
+    tarball_name=puppet-ldap-480f13af6d17d1d3fcf0dc7b4bd04b49fa4099e1.tar.gz
+
+    directory_name=puppet-ldap-master
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/torian/puppet-ldap/tarball/480f13af6d17d1d3fcf0dc7b4bd04b49fa4099e1
+- name: puppet-network-7deacd5fdc22c0543455878a8d1872f2f5417c1d.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet
+
+    tarball_name=puppet-network-7deacd5fdc22c0543455878a8d1872f2f5417c1d.tar.gz
+
+    directory_name=packstack/puppet/modules/network
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/voxpupuli/puppet-network/tarball/7deacd5fdc22c0543455878a8d1872f2f5417c1d
+- name: puppet-nslcd-b8c19b1ada89865f2e50758e054583798ad8011a.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet
+
+    tarball_name=puppet-nslcd-b8c19b1ada89865f2e50758e054583798ad8011a.tar.gz
+
+    directory_name=packstack/puppet/modules/nslcd
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/jlyheden/puppet-nslcd/tarball/b8c19b1ada89865f2e50758e054583798ad8011a
+- name: puppi-c1c47f4edfd761d1bbde32a75da0c3fa7cc93a81.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads/puppet
+
+    tarball_name=puppi-c1c47f4edfd761d1bbde32a75da0c3fa7cc93a81.tar.gz
+
+    directory_name=puppi-master
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/example42/puppi/tarball/c1c47f4edfd761d1bbde32a75da0c3fa7cc93a81
+- name: helm-v2.12.1-linux-amd64.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=helm-v2.12.1-linux-amd64.tar.gz
+
+    directory_name=linux-amd64
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://storage.googleapis.com/kubernetes-helm/helm-v2.12.1-linux-amd64.tar.gz
+- name: openstack-helm-9d72fe1a501bc609a875eebf7b6274e18600ed70.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=openstack-helm-9d72fe1a501bc609a875eebf7b6274e18600ed70.tar.gz
+
+    directory_name=openstack-helm
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/openstack/openstack-helm/archive/9d72fe1a501bc609a875eebf7b6274e18600ed70.tar.gz
+- name: openstack-helm-infra-5d356f9265b337b75f605dee839faa8cd0ed3ab2.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=openstack-helm-infra-5d356f9265b337b75f605dee839faa8cd0ed3ab2.tar.gz
+
+    directory_name=openstack-helm-infra
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/openstack/openstack-helm-infra/archive/5d356f9265b337b75f605dee839faa8cd0ed3ab2.tar.gz
+- name: gnocchi-4.2.5.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=gnocchi-4.2.5.tar.gz
+
+    directory_name=gnocchi-4.2.5
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://pypi.io/packages/source/g/gnocchi/gnocchi-4.2.5.tar.gz
+- name: gnocchiclient-7.0.1.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=gnocchiclient-7.0.1.tar.gz
+
+    directory_name=gnocchiclient-7.0.1
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://pypi.io/packages/source/g/gnocchiclient/gnocchiclient-7.0.1.tar.gz
+- name: kubernetes-v1.12.1.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=kubernetes-v1.12.1.tar.gz
+
+    directory_name=kubernetes-1.12.1
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/kubernetes/kubernetes/archive/v1.12.1.tar.gz
+- name: kubernetes-contrib-v1.12.1.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=kubernetes-contrib-v1.12.1.tar.gz
+
+    directory_name=kubernetes-contrib-1.12.1
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/kubernetes/contrib/tarball/4b2a8512a95611acb174bd306e501719ce70b1cf
+- name: gorilla-mux-456bcfa82d672db7cae587c9b541463f65bc2718.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=gorilla-mux-456bcfa82d672db7cae587c9b541463f65bc2718.tar.gz
+
+    directory_name=gorilla-mux
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/gorilla/mux/archive/456bcfa82d672db7cae587c9b541463f65bc2718.tar.gz
+- name: gorilla-context-08b5f424b9271eedf6f9f0ce86cb9396ed337a42.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=gorilla-context-08b5f424b9271eedf6f9f0ce86cb9396ed337a42.tar.gz
+
+    directory_name=gorilla-context
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/gorilla/context/archive/08b5f424b9271eedf6f9f0ce86cb9396ed337a42.tar.gz
+- name: Sirupsen-logrus-55eb11d21d2a31a3cc93838241d04800f52e823d.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=Sirupsen-logrus-55eb11d21d2a31a3cc93838241d04800f52e823d.tar.gz
+
+    directory_name=Sirupsen-logrus
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: github.com/Sirupsen/logrus/archive/55eb11d21d2a31a3cc93838241d04800f52e823d.tar.gz
+- name: gophercloud-gophercloud-aa00757ee3ab58e53520b6cb910ca0543116400a.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=gophercloud-gophercloud-aa00757ee3ab58e53520b6cb910ca0543116400a.tar.gz
+
+    directory_name=gophercloud-gophercloud
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: github.com/gophercloud/gophercloud/archive/aa00757ee3ab58e53520b6cb910ca0543116400a.tar.gz
+- name: docker-libtrust-fa567046d9b14f6aa788882a950d69651d230b21.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=docker-libtrust-fa567046d9b14f6aa788882a950d69651d230b21.tar.gz
+
+    directory_name=docker-libtrust
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: https://github.com/docker/libtrust/archive/fa567046d9b14f6aa788882a950d69651d230b21.tar.gz
+- name: docker-distribution-48294d928ced5dd9b378f7fd7c6f5da3ff3f2c89.tar.gz
+  script: 'download_directory=output/stx-r1/CentOS/pike/downloads
+
+    tarball_name=docker-distribution-48294d928ced5dd9b378f7fd7c6f5da3ff3f2c89.tar.gz
+
+    directory_name=docker-distribution
+
+    ./scripts/generic_script.sh $tarball_name $directory_name $download_directory
+
+    '
+  url: github.com/docker/distribution/archive/48294d928ced5dd9b378f7fd7c6f5da3ff3f2c89.tar.gz
+type: centos
+

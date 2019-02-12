@@ -11,6 +11,7 @@ from package import CentOSPackage, CentOSPackageList
 from stx_exceptions import *
 from test_yaml_parser import TempFiles, create_configuration_for_testing_yaml
 from configuration import Configuration
+from yaml_parser import YamlParser
 
 def mocked_requests_get(*args, **kwargs):
     class MockResponse:
@@ -24,15 +25,31 @@ def mocked_requests_get(*args, **kwargs):
 
 def mocked_komander_run(*args, **kwargs):
     class MockResponse:
-        def __init__(self, data, retcode):
+        def __init__(self, data, retcode, stdout='', stderr=''):
             self.cmd = data
             self.retcode = retcode
-            self.stdout = ''
+            self.stdout = stdout
+            self.stderr = stderr
         def read(self):
             return self.cmd
-
-    if 'anaconda-21' in args[0]:
-        m = MockResponse('Mock downloaded RPM\n{}\n'.format(args[0]), 0)
+    if 'which' in args[0]:
+        m = MockResponse('which yumdownloader command executed',
+                         0)
+        return m
+    elif 'makecache' in args[0]:
+        m = MockResponse('makecache command executed',
+                         0)
+        return m
+    elif 'rpm -K' in args[0]:
+        m = MockResponse('rpm -K command executed',
+                         0,
+                         'GPG Keys')
+        return m
+    elif 'anaconda-21' in args[0]:
+        m = MockResponse('Mock downloaded RPM\n{}\n'.format(args[0]),
+                         0,
+                         'stdout GPG Key anaconda'
+                         'stderr')
         package_dir = 'output/stx-r1/CentOS/pike/Source'
         datatowrite = m.cmd
         if not os.path.exists(package_dir):
@@ -43,7 +60,10 @@ def mocked_komander_run(*args, **kwargs):
             f.write(datatowrite)
         return m
     elif 'acl-2' in args[0]:
-        m = MockResponse('Mock downloaded RPM\n{}\n'.format(args[0]), 0)
+        m = MockResponse('Mock downloaded RPM\n{}\n'.format(args[0]),
+                         0,
+                         'stdout GPG Key acl',
+                         'stderr')
         package_dir = 'output/stx-r1/CentOS/pike/Binary/x86_64'
         datatowrite = m.cmd
         if not os.path.exists(package_dir):
@@ -53,8 +73,25 @@ def mocked_komander_run(*args, **kwargs):
                   'wb') as f:
             f.write(datatowrite)
         return m
+    elif 'abattis-cantarell-fonts' in args[0]:
+        m = MockResponse('Mock downloaded RPM\n{}\n'.format(args[0]),
+                         0,
+                         'stdout GPG Key abattis',
+                         'stderr')
+        package_dir = 'output/stx-r1/CentOS/pike/Binary/noarch/abattis-cantarell-fonts-0.0.25-1.el7.noarch.rpm'
+        datatowrite = m.cmd
+        if not os.path.exists(package_dir):
+            os.makedirs(package_dir)
+        with open('{}/{}'.format(package_dir,
+                  'abattis-cantarell-fonts-0.0.25-1.el7.noarch.rpm'),
+                  'wb') as f:
+            f.write(datatowrite)
+        return m
+
     elif args[0].find('doesntexist'):
         return MockResponse('Mock downloaded RPM FAIL\n{}\n'.format(args[0]), 1)
+    else:
+        pass
 
 def create_configuration_for_testing_centos_package():
         test_cfg = """[DownloadSettings]
@@ -311,6 +348,44 @@ class TestCentOSPackage(StxTest):
         pkg = CentOSPackage(url, conf)
         self.assertEquals(url, pkg.url)
         self.assertEquals('Binary/isolinux', pkg._get_destdir())
+
+
+    @mock.patch('package.Komander.run', side_effect=mocked_komander_run)
+    @mock.patch('package.requests.get', side_effect=mocked_requests_get)
+    def test_prune(self, mocked_run, mocked_urlopen):
+        # Generating a repo with some packages
+        conf = create_configuration_for_testing_centos_package()
+        # Download RPM: acl
+        rpm = 'acl-2.2.51-14.el7.x86_64.rpm'
+        pkg1 = CentOSPackage(rpm, conf)
+        pkg1.download()
+        pkgdir = 'output/stx-r1/CentOS/pike/Binary/x86_64/acl-2.2.51-14.el7.x86_64.rpm'
+        self.assertTrue(os.path.exists(pkgdir))
+        # Download URL: go-srpm-macros
+        url = 'http://cbs.centos.org/kojifiles/packages/go-srpm-macros/2/3.el7/noarch/go-srpm-macros-2-3.el7.noarch.rpm'
+        pkg2 = CentOSPackage(url, conf)
+        pkg2.download()
+        pkgdir = 'output/stx-r1/CentOS/pike/Binary/noarch/go-srpm-macros-2-3.el7.noarch.rpm'
+        self.assertTrue(os.path.exists(pkgdir))
+        # Generate a YAML for the prune: acl and abattis
+        test_yaml = """type: centos
+rpms:
+  - abattis-cantarell-fonts-0.0.25-1.el7.noarch.rpm
+  - acl-2.2.51-14.el7.x86_64.rpm
+        """
+        tmp_input_file = TempFiles(test_yaml)
+        conf_prune = create_configuration_for_testing_yaml(tmp_input_file.name)
+        yp = YamlParser()
+        pkgs = yp.load(conf_prune)
+        pkgs.setup()
+        pkgs.prune()
+        pkgdir = 'output/stx-r1/CentOS/pike/Binary/x86_64/acl-2.2.51-14.el7.x86_64.rpm'
+        self.assertTrue(os.path.exists(pkgdir))
+        #pkgdir = 'output/stx-r1/CentOS/pike/Binary/noarch/abattis-cantarell-fonts-0.0.25-1.el7.noarch.rpm'
+        #self.assertTrue(os.path.exists(pkgdir))
+        # Post Test
+        tmp_input_file.close()
+        os.remove(pkgdir)
 
     #
     # THIS TEST IS NOT WORKING YET
